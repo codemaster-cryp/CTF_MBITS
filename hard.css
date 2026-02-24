@@ -28,6 +28,65 @@ body{background:#000; color:#ff1744; font-family: Inter, 'Segoe UI', Arial, sans
 .control.right{right:8px}
 .control svg{width:20px;height:20px;fill:#ff1744}
 /* responsive fallback */
-@media (max-width:720px){.carousel{height:260px}.card{width:180px;height:120px}.container{padding:12px}}
+@media (max-width:720px){
+    .carousel{height:260px}
+    .card{width:180px;height:120px}
+    .container{padding:12px}
+    .header h1{font-size:32px}
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    .carousel {
+        height: 240px;
+        margin: 20px auto;
+    }
+    
+    .card {
+        width: 160px;
+        height: 110px;
+    }
+    
+    .card h3 {
+        font-size: 16px;
+    }
+    
+    .card p {
+        font-size: 12px;
+    }
+    
+    .header h1 {
+        font-size: 28px;
+    }
+    
+    .header p {
+        font-size: 13px;
+    }
+    
+    .control {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .control.left {
+        left: 4px;
+    }
+    
+    .control.right {
+        right: 4px;
+    }
+}
+
+/* Landscape phones */
+@media (max-width: 768px) and (orientation: landscape) {
+    .carousel {
+        height: 220px;
+    }
+    
+    .container {
+        margin: 20px auto;
+    }
+}
+
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){.card.jump, .ring{transition:none;animation:none}}

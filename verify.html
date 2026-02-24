@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Flag Verification</title>
     <link rel="stylesheet" href="style.css">
     <style>
@@ -221,6 +223,110 @@
             inset: 0;
             pointer-events: none;
             z-index: 1;
+        }
+        
+        /* Mobile responsive styles for winner modal */
+        @media (max-width: 768px) {
+            .winner-card {
+                width: auto;
+                max-width: 95%;
+                padding: 35px 25px;
+            }
+            
+            .winner-title {
+                font-size: 36px;
+                letter-spacing: 1px;
+            }
+            
+            .winner-message {
+                font-size: 18px;
+            }
+            
+            .winner-stats {
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            
+            .stat-box {
+                padding: 15px 20px;
+                min-width: 80px;
+            }
+            
+            .stat-num {
+                font-size: 28px;
+            }
+            
+            .stat-label {
+                font-size: 12px;
+            }
+            
+            .winner-prize {
+                font-size: 18px;
+                padding: 15px;
+            }
+            
+            .winner-close-btn {
+                padding: 12px 35px;
+                font-size: 16px;
+            }
+            
+            .trophy-animation {
+                width: 100px;
+                height: 100px;
+                margin: 0 auto 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .winner-card {
+                padding: 25px 18px;
+                max-width: 96%;
+            }
+            
+            .winner-title {
+                font-size: 28px;
+                letter-spacing: 0.5px;
+            }
+            
+            .winner-message {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+            
+            .winner-stats {
+                gap: 10px;
+            }
+            
+            .stat-box {
+                padding: 12px 16px;
+                min-width: 70px;
+            }
+            
+            .stat-num {
+                font-size: 24px;
+            }
+            
+            .stat-label {
+                font-size: 11px;
+            }
+            
+            .winner-prize {
+                font-size: 16px;
+                padding: 12px;
+                margin: 20px 0;
+            }
+            
+            .winner-close-btn {
+                padding: 14px 30px;
+                font-size: 15px;
+                width: 100%;
+            }
+            
+            .trophy-animation {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 15px;
+            }
         }
     </style>
 </head>
