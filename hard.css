@@ -1,0 +1,33 @@
+/* Hard page carousel styles - crimson red neon theme */
+body{background:#000; color:#ff1744; font-family: Inter, 'Segoe UI', Arial, sans-serif; overflow:auto;}
+.container{max-width:1100px;margin:40px auto;padding:20px;text-align:center;opacity:1;transform:none;position:relative;z-index:2}
+.header{margin-bottom:8px}
+.header h1{font-size:42px;color:#ff1744;margin:0;text-shadow:0 0 12px rgba(255,23,68,0.15)}
+.carousel{width:100%;height:360px;margin:40px auto;position:relative;perspective:1200px}
+.ring{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 600ms cubic-bezier(.2,.8,.2,1)}
+.tile{position:absolute;left:50%;top:50%;transform-origin:center;}
+.card{width:220px;height:140px;background:linear-gradient(180deg,#1a0708,#17070a);border:2px solid rgba(255,23,68,0.12);color:#ff1744;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(255,23,68,0.03);transition:transform 220ms ease,box-shadow 220ms ease;position:relative;overflow:hidden}
+.card h3{margin:4px 0 2px 0;font-size:18px;transition:text-shadow 220ms ease,color 220ms ease,letter-spacing 220ms ease}
+.card p{margin:0;font-size:13px;color:rgba(255,23,68,0.8);transition:text-shadow 220ms ease,color 220ms ease}
+.card::after{content:"";position:absolute;inset:-30%;background:radial-gradient(circle, rgba(255,170,170,0.18) 0%, rgba(255,120,120,0.10) 35%, rgba(0,0,0,0) 70%);filter:blur(18px);opacity:0;transform:scale(0.86);transition:opacity 260ms ease,transform 260ms ease;pointer-events:none}
+.card.jump{animation:jump 3s ease-in-out infinite}
+@keyframes jump{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+/* Hover/focus state */
+.tile.focused .card{transform:scale(1.06);box-shadow:0 20px 60px rgba(255,23,68,0.25)}
+.tile.focused .card::after,
+.tile:hover .card::after{opacity:1;transform:scale(1)}
+.tile.focused .card h3,
+.tile:hover .card h3{color:#ffdbdb;text-shadow:0 0 8px rgba(255,200,200,0.9),0 0 20px rgba(255,23,68,0.65),0 0 34px rgba(255,23,68,0.38);letter-spacing:0.7px}
+.tile.focused .card p,
+.tile:hover .card p{color:#ffc7c7;text-shadow:0 0 7px rgba(255,180,180,0.8),0 0 16px rgba(255,23,68,0.45)}
+.carousel.paused .card.jump{animation-play-state:paused;}
+/* Controls */
+.control{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.5);border:2px solid rgba(255,23,68,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:30}
+.control:hover{background:rgba(255,23,68,0.06)}
+.control.left{left:8px}
+.control.right{right:8px}
+.control svg{width:20px;height:20px;fill:#ff1744}
+/* responsive fallback */
+@media (max-width:720px){.carousel{height:260px}.card{width:180px;height:120px}.container{padding:12px}}
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){.card.jump, .ring{transition:none;animation:none}}

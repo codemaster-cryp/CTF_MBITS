@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hard Challenges</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="hard.css">
+  <style>
+    .button-group { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 12px; z-index: 40; }
+    .button-group button { padding: 12px 24px; background: transparent; border: 1px solid #ff1744; color: #ff1744; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .button-group button:hover { transform: translateY(-4px); background: rgba(255,23,68,0.1); box-shadow: 0 0 20px rgba(255,23,68,0.6), 0 0 40px rgba(255,23,68,0.3); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Level 3 — Hard</h1>
+      <p style="color:rgba(255,23,68,0.8)">Hover a tile to pause and select a challenge.</p>
+    </div>
+
+    <div class="carousel" aria-label="Challenges carousel">
+      <div class="ring">
+        <!-- sample tiles (replace slug with actual challenge URLs) -->
+        <div class="tile" data-slug="/evilcorp"><div class="card jump"><h3>Puzzle 01</h3><p>Quantum encryption</p></div></div>
+        <div class="tile" data-slug="hard/challenge-2.html"><div class="card jump"><h3>Puzzle 02</h3><p>Zero-day exploit</p></div></div>
+        <div class="tile" data-slug="hard/challenge-3.html"><div class="card jump"><h3>Puzzle 03</h3><p>Kernel debugging</p></div></div>
+        <div class="tile" data-slug="hard/challenge-4.html"><div class="card jump"><h3>Puzzle 04</h3><p>APT reverse eng</p></div></div>
+        <div class="tile" data-slug="hard/challenge-5.html"><div class="card jump"><h3>Puzzle 05</h3><p>Hardware hacking</p></div></div>
+        <div class="tile" data-slug="hard/challenge-6.html"><div class="card jump"><h3>Puzzle 06</h3><p>Protocol fuzzing</p></div></div>
+        <div class="tile" data-slug="hard/challenge-7.html"><div class="card jump"><h3>Puzzle 07</h3><p>Crypto breaking</p></div></div>
+        <div class="tile" data-slug="hard/challenge-8.html"><div class="card jump"><h3>Puzzle 08</h3><p>Meta challenges</p></div></div>
+      </div>
+
+      <div class="control left" role="button" aria-label="Previous" tabindex="0">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </div>
+      <div class="control right" role="button" aria-label="Next" tabindex="0">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+      </div>
+    </div>
+
+    <p style="margin-top:24px"><button onclick="window.location='control-room.html'">To Control Room</button></p>
+  </div>
+
+  <div class="button-group">
+    <button onclick="window.location='verify.html'">VERIFY</button>
+  </div>
+
+  <script src="easy.js"></script>
+</body>
+</html>

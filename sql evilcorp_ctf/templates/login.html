@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E Corp Portal</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00ff00;
+            font-family: monospace;
+            text-align: center;
+            padding-top: 100px;
+        }
+        input, button {
+            background: black;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>E Corp Internal Login</h1>
+<p>"Control is an illusion."</p>
+
+<form method="POST">
+    <input type="text" name="username" placeholder="Username"><br>
+    <input type="text" name="password" placeholder="Password"><br>
+    <button type="submit">Login</button>
+</form>
+
+<p>{{ message }}</p>
+
+</body>
+</html>

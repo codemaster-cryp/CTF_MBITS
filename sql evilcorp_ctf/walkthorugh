@@ -1,0 +1,6 @@
+in terminal run python3 app.py
+open link
+in the place of user name
+it is a sql injection so type admin'--
+and password anything(rtyujnbvfty)
+flag reviel

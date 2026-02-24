@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flag Verification</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .button-group { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 12px; z-index: 40; }
+        .button-group button { padding: 12px 24px; background: transparent; border: 1px solid #00ffcc; color: #00ffcc; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .button-group button:hover { transform: translateY(-4px); background: rgba(0,255,204,0.1); box-shadow: 0 0 20px rgba(0,255,204,0.6), 0 0 40px rgba(0,255,204,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="bg-image"></div>
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <h1 class="glitch" data-text="FLAG VERIFICATION">FLAG VERIFICATION</h1>
+    <p class="subtitle">Submit your flags to prove your mastery.</p>
+
+    <button onclick="showVerifyModal()">VERIFY FLAGS</button>
+</div>
+
+<div class="button-group">
+    <button onclick="window.location='control-room.html'">TO CONTROL ROOM</button>
+</div>
+
+<!-- Flag verification modal -->
+<div id="verify-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="verify-modal-title">
+        <h2 id="verify-modal-title">Flag Submission</h2>
+        <p class="modal-desc">Enter the flag to verify your progress.</p>
+        <form id="verify-form">
+            <label class="field">
+                <span class="label-text">Flag</span>
+                <input id="verify-flag" name="flag" type="text" required autocomplete="off" placeholder="FLAG{...}" />
+            </label>
+            <div class="modal-actions">
+                <button type="submit" class="btn primary">Verify</button>
+                <button type="button" class="btn" id="verify-cancel">Cancel</button>
+            </div>
+            <div class="modal-status" id="verify-status" aria-live="polite"></div>
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    initMatrix();
+    setTimeout(() => {
+        const hdr = document.querySelector('.glitch');
+        if (hdr) hdr.classList.add('glitch-animate');
+    }, 520);
+    setTimeout(() => {
+        animateSubtitle();
+    }, 720);
+    setTimeout(() => {
+        decryptHeader();
+    }, 600);
+});
+
+document.addEventListener('decryptComplete', checkAndShowVerifyModal);
+document.addEventListener('subtitleComplete', checkAndShowVerifyModal);
+let __verifyReady = { decrypt: false, subtitle: false };
+function checkAndShowVerifyModal(e) {
+    if (e.type === 'decryptComplete') __verifyReady.decrypt = true;
+    if (e.type === 'subtitleComplete') __verifyReady.subtitle = true;
+    if (__verifyReady.decrypt && __verifyReady.subtitle) {
+        setTimeout(showVerifyModal, 400);
+    }
+}
+
+function showVerifyModal() {
+    const modal = document.getElementById('verify-modal');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'false');
+    const card = modal.querySelector('.modal-card');
+    if (card) {
+        card.classList.add('jump-animate');
+    }
+    setTimeout(() => {
+        const flagInput = document.getElementById('verify-flag');
+        if (flagInput) flagInput.focus();
+    }, 120);
+    
+    const form = document.getElementById('verify-form');
+    const cancel = document.getElementById('verify-cancel');
+    if (form && !form._wired) {
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            await submitFlag(form);
+        });
+        cancel.addEventListener('click', () => {
+            modal.setAttribute('aria-hidden', 'true');
+        });
+        form._wired = true;
+    }
+}
+
+function getProgress() {
+    const stored = localStorage.getItem('ctf_verified_flags');
+    return stored ? JSON.parse(stored) : { easy: [], medium: [], hard: [] };
+}
+
+function saveProgress(progress) {
+    localStorage.setItem('ctf_verified_flags', JSON.stringify(progress));
+    updateProgressDisplay();
+}
+
+function updateProgressDisplay() {
+    const progress = getProgress();
+    const easy = progress.easy.length;
+    const medium = progress.medium.length;
+    const hard = progress.hard.length;
+    const total = easy + medium + hard;
+    const max = 3 + 3 + 2;
+    const progressDiv = document.getElementById('progress-display') || createProgressDisplay();
+    progressDiv.innerHTML = `<strong>Flags Verified:</strong> Easy: ${easy}/3 | Medium: ${medium}/3 | Hard: ${hard}/2 (Total: ${total}/${max})`;
+}
+
+function createProgressDisplay() {
+    const div = document.createElement('div');
+    div.id = 'progress-display';
+    div.style.cssText = 'padding: 12px; background: rgba(0,255,204,0.1); border: 1px solid rgba(0,255,204,0.3); border-radius: 6px; margin-top: 12px; font-size: 13px; color: #00ffcc;';
+    const container = document.querySelector('.container');
+    if (container) container.insertBefore(div, container.lastChild);
+    return div;
+}
+
+function getApiBaseUrl() {
+    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return isDev ? 'http://localhost:3000' : window.location.origin;
+}
+
+async function submitFlag(form) {
+    const status = document.getElementById('verify-status');
+    const flag = document.getElementById('verify-flag').value.trim();
+    if (!flag) {
+        status.textContent = 'Please enter a flag.';
+        return;
+    }
+    status.innerHTML = '<span class="spinner"></span> Verifying...';
+    try {
+        const url = `${getApiBaseUrl()}/verify-flag`;
+        console.log('[CTF] Verifying flag at:', url);
+        const res = await fetch(url, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flag: flag })
+        });
+        
+        if (!res.ok) {
+            const errText = await res.text();
+            console.error('[CTF] Server error:', res.status, errText);
+            throw new Error(`Server ${res.status}`);
+        }
+        
+        const j = await res.json();
+        console.log('[CTF] Server response:', j);
+        
+        if (j && j.valid) {
+            const progress = getProgress();
+            const difficulty = j.difficulty || 'easy';
+            if (!progress[difficulty]) progress[difficulty] = [];
+            if (!progress[difficulty].includes(flag)) {
+                progress[difficulty].push(flag);
+                saveProgress(progress);
+            }
+            status.style.color = '#bfffcf';
+            status.textContent = '✓ Flag verified successfully!';
+            document.getElementById('verify-flag').value = '';
+            setTimeout(() => {
+                document.getElementById('verify-modal').setAttribute('aria-hidden', 'true');
+            }, 1200);
+        } else {
+            status.style.color = '#ffd1d1';
+            status.textContent = j.message || 'Flag not recognized. Try again.';
+        }
+    } catch (err) {
+        status.style.color = '#ffd1d1';
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        status.textContent = isDev ? `Error: ${err.message}` : 'Verification failed. Please try again.';
+        console.error('[CTF] Error:', err);
+    }
+}
+
+window.addEventListener('load', () => {
+    updateProgressDisplay();
+});
+</script>
+</body>
+</html>

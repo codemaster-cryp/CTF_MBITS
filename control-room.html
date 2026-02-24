@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Control Room</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* background override for challenges page */
+        html { height: 100%; overflow-y: scroll; }
+        body { height: auto; min-height: 100vh; overflow-y: auto; background: #000 url('mrrobot-bg.jpg') center/cover fixed; background-attachment: fixed; }
+        /* neon flicker heading style */
+        h1.neon { font-family:'Lucida Console',monospace; font-size:64px; position:relative; color:#0f0; margin-top:-90px; margin-bottom:12px; }
+        h1.neon::before { content: ''; position:absolute; left:0; top:0; color:#0f0; text-shadow:0 0 6px #0f0,0 0 12px #0f0; }
+        h1.neon.typed { text-shadow:0 0 6px #0f0,0 0 12px #0f0,0 0 8px rgba(0,255,0,0.5); animation:flicker 2s infinite; }
+
+        @keyframes flicker { 0%,18%,22%,25%,53%,57%,100%{opacity:1;} 20%,24%,55%{opacity:0.2;} }
+        @keyframes blink { 50%{opacity:0;} }
+        .levels { display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 8%; }
+        /* heading typewriter */
+        .typewrite { display:inline-block; overflow:hidden; white-space:nowrap; border-right:2px solid #0f0; }
+        /* status styling */
+        .status { font-family:'Courier New',monospace; font-size:22px; color:#f00; font-weight:bold; text-shadow:0 0 6px #f00,0 0 18px #f00; margin:0; padding:10px 0; min-width:300px; text-align:center; }
+        .status.typed { animation:blink 1s step-end infinite; }
+        .status.typing::after { content:'|'; margin-left:6px; animation:blink 700ms steps(1) infinite; }
+        .level { width: 250px; margin: 20px; padding: 24px; background: rgba(0,0,0,0.7);
+            border: 1px solid #00ffcc; border-radius: 12px; color: #00ffcc; text-align:center;
+            position: relative; overflow: hidden; cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
+            animation: bounce 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(0,255,204,0.3);
+        }
+        .level:hover { transform: translateY(-6px); background: rgba(0,0,0,0.85); box-shadow: 0 0 30px rgba(0,255,204,0.8), 0 0 60px rgba(0,255,204,0.4); }
+        .level:hover h2 { text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px rgba(0,255,204,0.5); }
+        .level:hover p { text-shadow: 0 0 8px #00ffcc; }
+        .level::before { content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.03), transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(0,255,204,0.04), transparent 50%);
+            opacity:0; transition:opacity 0.6s ease;
+            pointer-events: none;
+        }
+        .level:hover::before { opacity: 1; }
+        .level h2 { margin:0 0 12px 0; font-size:24px; letter-spacing:1px; transition: text-shadow 0.3s ease; }
+        .level p { font-size:14px; transition: text-shadow 0.3s ease; }
+        .level.locked { cursor:not-allowed; opacity:0.5; animation: bounce 2s ease-in-out infinite; }
+        .level.locked:hover { transform:none; background: rgba(0,0,0,0.7); }
+        .level.completed::after { content:'✓ COMPLETED'; position:absolute; top:8px; right:8px; font-size:12px; color:#0f0; }
+        /* level access dialog */
+        .level-modal { display:none; position:fixed; inset:0; z-index:100; justify-content:center; align-items:center; }
+        .level-modal.show { display:flex; }
+        .level-modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.8); opacity:0; animation:fadeIn 0.3s ease forwards; }
+        .level-modal-content { position:relative; background:rgba(6,6,8,0.95); border:1px solid rgba(0,255,204,0.1); border-radius:8px; padding:40px; max-width:500px; text-align:center; }
+        .level-modal-content h2 { color:#f00; font-size:28px; margin:0 0 16px 0; text-shadow:0 0 6px #f00,0 0 12px #f00; }
+        .level-modal-content p { color:#00ffcc; margin:0 0 24px 0; }
+        .level-modal-content button { padding:12px 24px; background:transparent; border:2px solid #f00; color:#f00; font-size:16px; cursor:pointer; transition:0.3s; text-shadow:0 0 6px #f00; }
+        .level-modal-content button:hover { background:#f00; color:#000; box-shadow:0 0 20px #f00; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        /* animate entrance */
+        .level { animation: floatIn 1.2s ease forwards; opacity:0; transform: translateY(30px); }
+        .level:nth-child(1){ animation-delay:0.2s; }
+        .level:nth-child(2){ animation-delay:0.4s; }
+        .level:nth-child(3){ animation-delay:0.6s; }
+        @keyframes floatIn { to { opacity:1; transform: translateY(0); } }
+        .container { padding-top: 0; padding-bottom: 60px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="neon typewrite" data-text="WELCOME TO CONTROL ROOM">WELCOME TO CONTROL ROOM</h1>
+        <p class="subtitle status">System status nominal.</p>
+        <div class="levels">
+            <div class="level" data-level="easy" onclick="window.location='easy.html'">
+                <h2>Level 1: Easy</h2>
+                <p>Beginner-friendly puzzles to warm you up.</p>
+            </div>
+            <div class="level" data-level="medium" onclick="window.location='medium.html'">
+                <h2>Level 2: Medium</h2>
+                <p>Challenges requiring some brainpower and persistence.</p>
+            </div>
+            <div class="level" data-level="hard" onclick="window.location='hard.html'">
+                <h2>Level 3: Hard</h2>
+                <p>Only the elite can crack these.</p>
+            </div>
+        </div>
+        <button onclick="window.location='index.html'">BACK</button>
+    </div>
+    <div class="level-modal" id="level-modal">
+        <div class="level-modal-backdrop"></div>
+        <div class="level-modal-content">
+            <h2>ACCESS DENIED</h2>
+            <p id="modal-msg">Complete the previous level first.</p>
+            <button onclick="document.getElementById('level-modal').classList.remove('show')">OK</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // keep same JS for background and matrix etc.
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            if (typeof initMatrix === 'function') initMatrix();
+            runWelcomeSequence();
+        });
+        
+        function runWelcomeSequence(){
+            const hdr=document.querySelector('h1.typewrite');
+            const stat=document.querySelector('p.status');
+            if(hdr) typeText(hdr, 60,()=>{
+                hdr.classList.add('typed');
+                if(stat) typeText(stat, 40, ()=> stat.classList.add('typed'));
+            });
+        }
+        function typeText(el,speed,cb){
+            const full=el.dataset.fullText || el.textContent.trim();
+            el.dataset.fullText=full;
+            el.textContent='';
+            el.classList.add('typing');
+            let i=0;
+            (function type(){
+                if(i<full.length){
+                    el.textContent=full.slice(0,i+1);
+                    i++;
+                    setTimeout(type,speed);
+                } else {
+                    el.classList.remove('typing');
+                    if(cb) cb();
+                }
+            })();
+        }
+        
+        // Level access control
+        const levelSequence = ['easy', 'medium', 'hard'];
+        function initLevelAccess(){
+            const completed = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+            levelSequence.forEach((level,idx)=>{
+                const card = document.querySelector(`[data-level="${level}"]`);
+                // temporary dev mode: unlock everything
+                //if(idx === 0 || completed.includes(levelSequence[idx-1])){
+                    card.classList.remove('locked');
+                    card.style.cursor='pointer';
+                //} else {
+                //    card.classList.add('locked');
+                //}
+                if(completed.includes(level)) card.classList.add('completed');
+            });
+        }
+        function accessLevel(level){
+            // clicking easy now uses a native link; this function handles medium/hard locks
+
+            const idx = levelSequence.indexOf(level);
+            const completed = JSON.parse(localStorage.getItem('completedLevels') || '[]');
+            // dev mode: always allow
+            alert(`Loading ${level.toUpperCase()} level challenges...`);
+            // if(idx > 0 && !completed.includes(levelSequence[idx-1])){
+            //     document.getElementById('modal-msg').textContent = `Complete ${levelSequence[idx-1].toUpperCase()} level first.`;
+            //     document.getElementById('level-modal').classList.add('show');
+            // } else {
+            //     alert(`Loading ${level.toUpperCase()} level challenges...`);
+            // }
+        }
+        window.addEventListener('load',()=>{
+            initLevelAccess();
+        });
+    </script>
+    <canvas id="matrix"></canvas>
+</body>
+</html>

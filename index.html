@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fsociety CTF Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-image"></div>
+<canvas id="matrix"></canvas>
+
+<!-- Illuminati eye overlay (fixed, won't affect layout) -->
+<div class="eye" id="illuminati-eye" aria-hidden="true">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <polygon points="50,5 95,95 5,95" fill="rgba(255,255,255,0.03)" stroke="#00ffcc" stroke-width="0.6" />
+        <circle class="eye-iris" cx="50" cy="55" r="10" fill="#00ffcc" opacity="0.95" />
+        <circle class="eye-pupil" cx="50" cy="55" r="5" fill="#001" />
+        <circle class="eye-glint" cx="54" cy="50" r="1.6" fill="#fff" opacity="0.9" />
+    </svg>
+</div>
+
+<div class="container">
+    <h1 class="glitch" data-text="FSOCIETY">FSOCIETY</h1>
+    <p class="subtitle">We are watching. Can you hack the system?</p>
+
+    <button onclick="enterCTF()">ENTER CHALLENGES</button>
+</div>
+
+<!-- Entry modal (appears after animations finish) -->
+<div id="entry-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <h2 id="modal-title">CTF Entry</h2>
+        <p class="modal-desc">Enter your name and the pseudocode provided by the admin.</p>
+        <form id="entry-form">
+            <label class="field">
+                <span class="label-text">Name</span>
+                <input id="entry-name" name="name" type="text" required autocomplete="off" />
+            </label>
+            <label class="field">
+                <span class="label-text">Pseudocode</span>
+                <input id="entry-code" name="pseudocode" type="text" required autocomplete="off" />
+            </label>
+            <div class="modal-actions">
+                <button type="submit" class="btn primary">Verify</button>
+                <button type="button" class="btn" id="modal-cancel">Cancel</button>
+            </div>
+            <div class="modal-status" id="modal-status" aria-live="polite"></div>
+        </form>
+    </div>
+</div>
+
+<audio autoplay loop>
+    <source src="hacker.mp3" type="audio/mpeg">
+</audio>
+
+<script src="script.js"></script>
+</body>
+</html>

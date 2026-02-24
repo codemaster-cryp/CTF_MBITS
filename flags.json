@@ -1,0 +1,16 @@
+{
+  "easy": [
+    "{STEGANOGRAPHY_HIDDEN}",
+    "FLAG{BASIC_CRYPTOGRAPHY}",
+    "FLAG{PACMAN_CHAMPION}"
+  ],
+  "medium": [
+    "FLAG{WEB_SECURITY}",
+    "FLAG{LOGIC_SOLVED}",
+    "FLAG{ENCODING_MASTERY}"
+  ],
+  "hard": [
+    "FLAG{REVERSING_EFLAGXPERT}",
+    "FLAG{TRIVIA_GENIUS}"
+  ]
+}

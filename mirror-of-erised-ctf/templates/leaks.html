@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Captured Referrers</title></head>
+<body style="background:#000; color:lime;">
+    <h2>🕵️ Captured Referrer Headers:</h2>
+    <ul>
+        {% for leak in leaks %}
+        <li>{{ leak }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

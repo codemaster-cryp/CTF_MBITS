@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Initializing Control Room</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #000; color: #f00; display:flex;justify-content:center;align-items:center;height:100vh; }
+        .init { font-family:'Courier New',monospace; font-size:48px; letter-spacing:2px; }
+        .init.typing::after { content:'|'; margin-left:6px; animation:blink 700ms steps(1) infinite; }
+        @keyframes blink {50%{opacity:0;}}
+    </style>
+</head>
+<body>
+    <div class="init" id="init-text"></div>
+    <script>
+        const text="INITIALISING....";
+        const el=document.getElementById('init-text');
+        let i=0;
+        (function type(){
+            if(i<=text.length){el.textContent=text.slice(0,i);i++;setTimeout(type,80);}else{
+                setTimeout(()=>{window.location.href='control-room.html';},800);
+            }
+        })();
+    </script>
+</body>
+</html>
