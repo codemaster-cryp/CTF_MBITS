@@ -238,6 +238,7 @@
 
 <div class="button-group">
     <button onclick="window.location='control-room.html'">TO CONTROL ROOM</button>
+    <button onclick="resetProgress()" style="background: rgba(255,0,0,0.1); border-color: #ff4444; color: #ff4444;">RESET PROGRESS</button>
 </div>
 <!-- Winner celebration modal -->
 <div id="winner-modal" class="winner-overlay" aria-hidden="true">
@@ -262,8 +263,7 @@
             <div class="stat-box"><span class="stat-num">2</span><span class="stat-label">Hard</span></div>
         </div>
         <p class="winner-prize">💰 Report to CTF Admin to claim your CASH PRIZE! 💰</p>
-        <p style="font-size: 12px; color: rgba(255,255,255,0.5); margin: 10px 0;">Note: Progress will auto-reset when you close this dialog (for testing)</p>
-        <button class="winner-close-btn" onclick="closeWinnerModal()">RESET & CLOSE</button>
+        <button class="winner-close-btn" onclick="closeWinnerModal()">AWESOME!</button>
     </div>
     <canvas id="confetti-canvas"></canvas>
 </div>
@@ -375,13 +375,14 @@ function closeWinnerModal() {
     const modal = document.getElementById('winner-modal');
     if (modal) modal.setAttribute('aria-hidden', 'true');
     stopConfetti();
-    // Auto-reset progress for testing
-    localStorage.removeItem('ctf_verified_flags');
-    // Force immediate UI update
-    setTimeout(() => {
+}
+
+function resetProgress() {
+    if (confirm('Reset all flag progress? This will clear all verified flags.')) {
+        localStorage.removeItem('ctf_verified_flags');
         updateProgressDisplay();
-    }, 100);
-    console.log('[CTF] Progress reset - ready for next test run');
+        alert('Progress reset to 0/8. Ready for next test run.');
+    }
 }
 
 function startConfetti() {
