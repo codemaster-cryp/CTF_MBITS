@@ -1,7 +1,9 @@
 // Fade-in background and init matrix animation
 window.addEventListener('load', () => {
-    // trigger CSS fade-ins
-    document.body.classList.add('loaded');
+    // Small delay ensures CSS is fully rendered before transitions fire
+    setTimeout(() => {
+        document.body.classList.add('loaded');
+    }, 50);
     initMatrix();
     // animate header and eye with a slight stagger
     setTimeout(() => {
@@ -10,16 +12,16 @@ window.addEventListener('load', () => {
 
         const eye = document.getElementById('illuminati-eye');
         if (eye) eye.classList.add('eye-animate');
-    }, 520);
+    }, 550);
 
     // start subtitle typewriter shortly after other animations
     setTimeout(() => {
         animateSubtitle();
-    }, 720);
-    // start header decrypt shortly after
+    }, 780);
+    // start header decrypt shortly after load
     setTimeout(() => {
         decryptHeader();
-    }, 600);
+    }, 650);
 });
 
 
