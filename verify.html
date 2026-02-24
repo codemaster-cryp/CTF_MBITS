@@ -377,7 +377,10 @@ function closeWinnerModal() {
     stopConfetti();
     // Auto-reset progress for testing
     localStorage.removeItem('ctf_verified_flags');
-    updateProgressDisplay();
+    // Force immediate UI update
+    setTimeout(() => {
+        updateProgressDisplay();
+    }, 100);
     console.log('[CTF] Progress reset - ready for next test run');
 }
 
@@ -445,9 +448,9 @@ function stopConfetti() {
 
 function updateProgressDisplay() {
     const progress = getProgress();
-    const easy = progress.easy.length;
-    const medium = progress.medium.length;
-    const hard = progress.hard.length;
+    const easy = progress.easy ? progress.easy.length : 0;
+    const medium = progress.medium ? progress.medium.length : 0;
+    const hard = progress.hard ? progress.hard.length : 0;
     const total = easy + medium + hard;
     const max = 3 + 3 + 2;
     const progressDiv = document.getElementById('progress-display') || createProgressDisplay();
