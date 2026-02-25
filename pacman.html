@@ -89,19 +89,49 @@
 		}
 
 		.win-dialog-content button {
-			background-color: #00ff00;
-			color: #000;
-			border: none;
-			padding: 10px 20px;
+            background: linear-gradient(180deg, rgba(0, 36, 0, 0.56), rgba(0, 0, 0, 0.46));
+            color: #7CFC00;
+            border: 1.5px solid #00ff00;
+            padding: 10px 22px;
 			margin-top: 15px;
 			cursor: pointer;
 			font-size: 16px;
 			font-weight: bold;
-			border-radius: 5px;
+            border-radius: 16px;
+            transition: all 0.24s ease;
+            box-shadow: 0 8px 18px rgba(0,255,0,0.22);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .win-dialog-content button::before {
+            content: '';
+            position: absolute;
+            top: -120%;
+            left: -40%;
+            width: 36%;
+            height: 320%;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(220,255,220,0.75), rgba(255,255,255,0));
+            transform: rotate(18deg) translateX(-220%);
+            opacity: 0;
+            pointer-events: none;
 		}
 
 		.win-dialog-content button:hover {
-			background-color: #00cc00;
+            transform: translateY(-3px) scale(1.03);
+            background: rgba(0,255,0,0.14);
+            color: #e8ffe0;
+            box-shadow: 0 0 20px rgba(0,255,0,0.84), 0 0 36px rgba(0,255,0,0.4), 0 10px 22px rgba(0,0,0,0.35);
+        }
+
+        .win-dialog-content button:hover::before {
+            opacity: 0.95;
+            animation: pacSweep 0.95s cubic-bezier(.2,.8,.2,1) forwards;
+        }
+
+        @keyframes pacSweep {
+            from { transform: rotate(18deg) translateX(-220%); }
+            to { transform: rotate(18deg) translateX(360%); }
 		}
 	</style>
 </head>

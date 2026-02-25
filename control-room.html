@@ -53,8 +53,11 @@
         .level-modal-content { position:relative; background:rgba(6,6,8,0.95); border:1px solid rgba(0,255,204,0.1); border-radius:8px; padding:40px; max-width:500px; text-align:center; }
         .level-modal-content h2 { color:#f00; font-size:28px; margin:0 0 16px 0; text-shadow:0 0 6px #f00,0 0 12px #f00; }
         .level-modal-content p { color:#00ffcc; margin:0 0 24px 0; }
-        .level-modal-content button { padding:12px 24px; background:transparent; border:2px solid #f00; color:#f00; font-size:16px; cursor:pointer; transition:0.3s; text-shadow:0 0 6px #f00; }
-        .level-modal-content button:hover { background:#f00; color:#000; box-shadow:0 0 20px #f00; }
+        .level-modal-content button { padding:12px 24px; background:linear-gradient(180deg, rgba(34,0,0,0.55), rgba(0,0,0,0.45)); border:1.5px solid #f00; color:#f00; font-size:16px; cursor:pointer; transition:all 0.24s ease; text-shadow:0 0 6px #f00; border-radius:16px; box-shadow:0 8px 18px rgba(255,0,0,0.24); position:relative; overflow:hidden; }
+        .level-modal-content button::before { content:''; position:absolute; top:-120%; left:-40%; width:36%; height:320%; background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,215,215,0.75), rgba(255,255,255,0)); transform:rotate(18deg) translateX(-220%); opacity:0; pointer-events:none; }
+        .level-modal-content button:hover { transform:translateY(-3px) scale(1.03); background:rgba(255,0,0,0.14); color:#fff; box-shadow:0 0 20px rgba(255,0,0,0.85), 0 0 34px rgba(255,0,0,0.38), 0 10px 22px rgba(0,0,0,0.35); }
+        .level-modal-content button:hover::before { opacity:0.95; animation:modalSweep 0.95s cubic-bezier(.2,.8,.2,1) forwards; }
+        @keyframes modalSweep { from { transform:rotate(18deg) translateX(-220%); } to { transform:rotate(18deg) translateX(360%); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         /* animate entrance */

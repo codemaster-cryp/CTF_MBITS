@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="medium.css">
   <style>
     .button-group { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 12px; z-index: 40; }
-    .button-group button { padding: 12px 24px; background: transparent; border: 1px solid #ffff33; color: #ffff33; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
-    .button-group button:hover { transform: translateY(-4px); background: rgba(255,255,51,0.1); box-shadow: 0 0 20px rgba(255,255,51,0.6), 0 0 40px rgba(255,255,51,0.3); }
+    .button-group button { padding: 12px 24px; background: linear-gradient(180deg, rgba(36,36,0,0.52), rgba(0,0,0,0.48)); border: 1.5px solid #ffff33; color: #ffff33; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.24s ease; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 18px rgba(255,255,51,0.18); position: relative; overflow: hidden; }
+    .button-group button::before { content: ''; position: absolute; top: -120%; left: -40%; width: 36%; height: 320%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,205,0.72), rgba(255,255,255,0)); transform: rotate(18deg) translateX(-220%); opacity: 0; pointer-events: none; }
+    .button-group button:hover { transform: translateY(-4px) scale(1.03); background: rgba(255,255,51,0.14); box-shadow: 0 0 20px rgba(255,255,51,0.82), 0 0 36px rgba(255,255,51,0.38), 0 10px 22px rgba(0,0,0,0.35); }
+    .button-group button:hover::before { opacity: 0.95; animation: mediumSweep 0.95s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes mediumSweep { from { transform: rotate(18deg) translateX(-220%); } to { transform: rotate(18deg) translateX(360%); } }
   </style>
 </head>
 <body>
