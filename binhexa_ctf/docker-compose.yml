@@ -1,0 +1,6 @@
+services:
+  binhexa:
+    build: .
+    ports:
+      - "6000:6000"
+    restart: always

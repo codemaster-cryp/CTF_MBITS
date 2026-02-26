@@ -1,0 +1,5 @@
+python3 server.py
+nc localhost 5000
+MD5: 312f91285e048e09bb4aefef23627994(laptop)
+SHA1: 45223b15f0bbd03ea1bb7646d05568bced01a1be(mbits111)
+SHA256: daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5(qwerty123)

@@ -29,8 +29,13 @@ const SUDOKU_TEMPLATE = path.join(__dirname, 'sudoku-ctf', 'challenge', 'templat
 const EMOJI_CTF_FILE = path.join(__dirname, 'emoji_ctf', 'emoji test');
 const CEASER_CIPHER_HTML = path.join(__dirname, 'CEASER CIPHER', 'easy-caesar-ctf', 'challenge', 'index.html');
 const CEASER_CIPHER_CSS = path.join(__dirname, 'CEASER CIPHER', 'easy-caesar-ctf', 'challenge', 'style.css');
+const MORSE_AUDIO_FILE = path.join(__dirname, 'morse', 'morse.mp3');
+const FIND_LOCATION_PROMPT = path.join(__dirname, 'find location', 'challenge');
+const FIND_LOCATION_IMAGE = path.join(__dirname, 'find location', 'location.jpg');
 const MBITS_IMAGE_FILE = path.join(__dirname, 'mbits.png');
+const FINAL_IMAGE_FILE = path.join(__dirname, 'final.png');
 const SIMPLE_IMAGE_FILE = path.join(__dirname, 'simple.png');
+const SIMPLE_ZIP_FILE = path.join(__dirname, 'simple.zip');
 const MIRROR_TEMPLATES = path.join(__dirname, 'mirror-of-erised-ctf', 'templates');
 const mirrorLeaks = [];
 const EVILCORP_DIR = path.join(__dirname, 'sql evilcorp_ctf');
@@ -43,6 +48,18 @@ const DO_NOTHING_FLAG = 'Mbits{leader_of_the_dark_army}';
 const doNothingSessions = {};
 const SUDOKU_FLAG = 'MBITS{hello friend}';
 const sudokuSessions = {};
+const BINHEXA_FLAG = 'mbits{elliots_mind_is_root}';
+const binhexaSessions = {};
+const HASHCRACK_FLAG = 'mbits{Darlene @lderson}';
+const hashcrackSessions = {};
+const MINDREADER_FLAG = 'mbits{this_flag_is_elliot}';
+const mindreaderSessions = {};
+const hashcrackPasswords = ['laptop', 'mbits111', 'qwerty123'];
+const hashcrackHashes = [
+    '312f91285e048e09bb4aefef23627994',
+    '45223b15f0bbd03ea1bb7646d05568bced01a1be',
+    'daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5'
+];
 
 const sudokuBaseBoard = [
     [5, 3, 4, 6, 7, 8, 9, 1, 2],
@@ -258,6 +275,389 @@ function renderCeaserCipherChallenge() {
     return html.replace('href="style.css"', 'href="/caesar-ctf/style.css"');
 }
 
+function renderFindLocationChallenge() {
+        const prompt = fs.existsSync(FIND_LOCATION_PROMPT)
+                ? fs.readFileSync(FIND_LOCATION_PROMPT, 'utf8').trim()
+                : 'Find the target location from the image metadata.';
+
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Find Location</title>
+    <style>
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0a0d14; color:#d8f5ff; font-family:'Courier New', monospace; }
+        .panel { width:min(920px, 94vw); background:rgba(8,16,24,.92); border:1px solid rgba(121,201,255,.4); border-radius:14px; padding:22px; box-shadow:0 12px 34px rgba(0,0,0,.45); }
+        h1 { margin:0 0 10px; color:#8be6ff; }
+        .prompt { color:#c8e3ea; margin-bottom:14px; white-space:pre-wrap; }
+        .img-wrap { background:#050b10; border:1px dashed rgba(121,201,255,.35); border-radius:10px; padding:12px; text-align:center; }
+        img { max-width:100%; border-radius:8px; }
+        .actions { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+        a, button { text-decoration:none; border:1px solid rgba(121,201,255,.5); color:#bdf0ff; background:#0a1a28; border-radius:10px; padding:9px 14px; font-weight:700; cursor:pointer; }
+        a:hover, button:hover { background:#133149; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Find Location</h1>
+        <div class="prompt">${escapeHtml(prompt)}</div>
+        <div class="img-wrap">
+            <img src="/find-location/image" alt="location challenge image" />
+        </div>
+        <div class="actions">
+            <a href="/find-location/image" download="location.jpg">Download image</a>
+            <button onclick="window.location='medium.html'">Back to Medium</button>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+function renderMorseChallenge() {
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Morse Signal</title>
+    <style>
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#080b12; color:#d8f4ff; font-family:'Courier New', monospace; }
+        .panel { width:min(860px, 94vw); background:rgba(8,16,26,.94); border:1px solid rgba(122,208,255,.35); border-radius:14px; padding:24px; box-shadow:0 12px 34px rgba(0,0,0,.45); }
+        h1 { margin:0 0 8px; color:#8ce8ff; }
+        .sub { color:#bfdbe6; margin-bottom:14px; }
+        .note { color:#9dc3d2; margin-top:14px; }
+        audio { width:100%; margin:12px 0; }
+        .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+        a, button { text-decoration:none; border:1px solid rgba(122,208,255,.45); color:#c8f5ff; background:#0b1d30; border-radius:10px; padding:9px 14px; font-weight:700; cursor:pointer; }
+        a:hover, button:hover { background:#153555; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Morse Intercept</h1>
+        <div class="sub">Decode the intercepted transmission and recover the flag.</div>
+        <audio controls preload="metadata" src="/morse-ctf/audio"></audio>
+        <div class="actions">
+            <a href="/morse-ctf/audio" download="morse.mp3">Download morse.mp3</a>
+            <a href="https://morsecode.world/international/decoder/audio-decoder-expert.html" target="_blank" rel="noopener noreferrer">Open Morse Decoder</a>
+            <button onclick="window.location='medium.html'">Back to Medium</button>
+        </div>
+        <div class="note">Tip: Upload the audio into a Morse decoder and read the output carefully.</div>
+    </div>
+</body>
+</html>`;
+}
+
+function renderHashcrackChallenge() {
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HashCrack Challenge</title>
+    <style>
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0b0d12; color:#d9eaff; font-family:'Courier New', monospace; }
+        .panel { width:min(860px,94vw); background:rgba(10,16,24,.94); border:1px solid rgba(123,163,255,.35); border-radius:14px; padding:24px; box-shadow:0 12px 36px rgba(0,0,0,.48); }
+        h1 { margin:0 0 8px; color:#93b5ff; }
+        .sub { color:#b7c8eb; margin-bottom:14px; }
+        .hashbox { background:#060b12; border:1px dashed rgba(123,163,255,.4); border-radius:10px; padding:12px; word-break:break-all; color:#dbe6ff; margin-bottom:10px; }
+        input { width:100%; box-sizing:border-box; padding:10px 12px; border-radius:10px; border:1px solid rgba(123,163,255,.5); background:#0d1624; color:#e5eeff; font-family:inherit; }
+        .actions { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+        button { border:1px solid rgba(123,163,255,.5); color:#cfe2ff; background:#13223a; border-radius:10px; padding:9px 14px; font-weight:700; cursor:pointer; }
+        button:hover { background:#1c3560; }
+        #msg { margin-top:12px; min-height:22px; color:#a9ffd1; }
+        .bad { color:#ff9cab !important; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>HashCrack Challenge</h1>
+        <div class="sub">Crack all 3 hashes in order and submit plaintext for each.</div>
+        <div class="hashbox" id="hashbox">Loading hash...</div>
+        <input id="answer" placeholder="Enter plaintext" autocomplete="off" />
+        <div class="actions">
+            <button id="submit">Submit</button>
+            <button id="restart">Restart</button>
+            <button onclick="window.location='medium.html'">Back</button>
+        </div>
+        <div id="msg"></div>
+    </div>
+<script>
+    const hashbox = document.getElementById('hashbox');
+    const answer = document.getElementById('answer');
+    const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submit');
+    const restartBtn = document.getElementById('restart');
+
+    async function start() {
+        const res = await fetch('/hashcrack/start', { method: 'POST' });
+        const data = await res.json();
+        hashbox.textContent = 'Hash ' + data.index + '/3: ' + data.hash;
+        answer.value = '';
+        msg.textContent = '';
+        msg.classList.remove('bad');
+        answer.focus();
+    }
+
+    async function submit() {
+        const res = await fetch('/hashcrack/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer.value.trim() })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.ok === false) {
+            msg.textContent = data.message || 'Wrong answer.';
+            msg.classList.add('bad');
+            return;
+        }
+
+        msg.classList.remove('bad');
+        if (data.flag) {
+            msg.textContent = 'FLAG: ' + data.flag;
+            hashbox.textContent = 'Challenge completed.';
+            answer.value = '';
+            return;
+        }
+
+        msg.textContent = data.message || 'Correct!';
+        hashbox.textContent = 'Hash ' + data.index + '/3: ' + data.hash;
+        answer.value = '';
+        answer.focus();
+    }
+
+    submitBtn.addEventListener('click', submit);
+    restartBtn.addEventListener('click', start);
+    answer.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+    start();
+</script>
+</body>
+</html>`;
+}
+
+function renderMindreaderChallenge() {
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MindReader</title>
+    <style>
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0b0f14; color:#d9ecff; font-family:'Courier New', monospace; }
+        .panel { width:min(860px,94vw); background:rgba(10,16,26,.94); border:1px solid rgba(135,168,255,.35); border-radius:14px; padding:24px; box-shadow:0 12px 36px rgba(0,0,0,.48); }
+        h1 { margin:0 0 8px; color:#a5bfff; }
+        .sub { color:#bccbec; margin-bottom:14px; }
+        .line { margin:8px 0; color:#d8e5ff; }
+        input { width:100%; box-sizing:border-box; padding:10px 12px; border-radius:10px; border:1px solid rgba(135,168,255,.5); background:#10192a; color:#e8f0ff; font-family:inherit; }
+        .actions { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+        button { border:1px solid rgba(135,168,255,.5); color:#d8e6ff; background:#182a47; border-radius:10px; padding:9px 14px; font-weight:700; cursor:pointer; }
+        button:hover { background:#24416f; }
+        #msg { margin-top:12px; min-height:22px; color:#a8ffd0; }
+        .bad { color:#ff9cab !important; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>MindReader</h1>
+        <div class="sub">Guess the secret number between 1 and 1000 in 10 attempts.</div>
+        <div class="line" id="attempts">Attempts left: --</div>
+        <input id="guess" placeholder="Enter your guess" autocomplete="off" />
+        <div class="actions">
+            <button id="submit">Submit Guess</button>
+            <button id="restart">Restart</button>
+            <button onclick="window.location='medium.html'">Back</button>
+        </div>
+        <div id="msg"></div>
+    </div>
+
+<script>
+    const attemptsEl = document.getElementById('attempts');
+    const guessEl = document.getElementById('guess');
+    const msgEl = document.getElementById('msg');
+    const submitBtn = document.getElementById('submit');
+    const restartBtn = document.getElementById('restart');
+
+    async function start() {
+        const res = await fetch('/mindreader/start', { method: 'POST' });
+        const data = await res.json();
+        attemptsEl.textContent = 'Attempts left: ' + data.attempts;
+        msgEl.textContent = '';
+        msgEl.classList.remove('bad');
+        guessEl.value = '';
+        guessEl.focus();
+    }
+
+    async function submitGuess() {
+        const guess = guessEl.value.trim();
+        const res = await fetch('/mindreader/guess', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guess })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.ok === false) {
+            msgEl.textContent = data.message || 'Invalid guess.';
+            msgEl.classList.add('bad');
+            return;
+        }
+
+        msgEl.classList.remove('bad');
+        attemptsEl.textContent = 'Attempts left: ' + data.attempts;
+
+        if (data.flag) {
+            msgEl.textContent = 'FLAG: ' + data.flag;
+            return;
+        }
+
+        if (data.status === 'high') {
+            msgEl.textContent = 'Too High';
+        } else if (data.status === 'low') {
+            msgEl.textContent = 'Too Low';
+        } else if (data.status === 'lost') {
+            msgEl.textContent = data.message || 'Out of attempts. Better luck next time.';
+            msgEl.classList.add('bad');
+        } else {
+            msgEl.textContent = data.message || 'Try again';
+        }
+        guessEl.value = '';
+        guessEl.focus();
+    }
+
+    submitBtn.addEventListener('click', submitGuess);
+    restartBtn.addEventListener('click', start);
+    guessEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitGuess(); });
+    start();
+</script>
+</body>
+</html>`;
+}
+
+function bin8(value) {
+        return Number(value).toString(2).padStart(8, '0');
+}
+
+function createBinhexaSession(clientId) {
+        const num1 = Math.floor(Math.random() * 256);
+        const num2 = Math.floor(Math.random() * 256);
+        const operations = [
+                { op: '<<', expected: bin8((num1 << 1) & 0xff) },
+                { op: '|', expected: bin8(num1 | num2) },
+                { op: '+', expected: (num1 + num2).toString(2) },
+                { op: '*', expected: (num1 * num2).toString(2) },
+                { op: '>>', expected: bin8(num2 >> 1) },
+                { op: '&', expected: bin8(num1 & num2) }
+        ];
+
+        binhexaSessions[clientId] = {
+                num1,
+                num2,
+                operations,
+                step: 0,
+                solved: false,
+                createdAt: Date.now()
+        };
+        return binhexaSessions[clientId];
+}
+
+function renderBinhexaPage() {
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BinHexa Redux</title>
+    <style>
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#070b13; color:#aef7ff; font-family:'Courier New', monospace; }
+        .card { width:min(760px,92vw); background:rgba(8,16,24,0.92); border:1px solid #53e8ff66; border-radius:14px; padding:24px; box-shadow:0 14px 34px rgba(0,0,0,.45), inset 0 0 20px rgba(83,232,255,.12); }
+        h1 { margin:0 0 8px; color:#7ef0ff; letter-spacing:.8px; }
+        .muted { color:#9bc5cf; margin-bottom:14px; }
+        .line { margin:7px 0; }
+        .q { margin-top:12px; font-size:18px; color:#ffd970; }
+        input { width:100%; margin-top:10px; box-sizing:border-box; padding:10px 12px; border-radius:8px; border:1px solid #4be4ff77; background:#081320; color:#d8fbff; font-family:inherit; }
+        .row { display:flex; gap:10px; margin-top:12px; }
+        button { padding:10px 14px; border-radius:10px; border:1px solid #4be4ff88; background:#0c1d2f; color:#aff9ff; cursor:pointer; font-weight:700; }
+        button:hover { background:#11314b; }
+        #msg { margin-top:12px; min-height:22px; color:#9cffad; }
+        .bad { color:#ff9aa4 !important; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>BinHexa Redux</h1>
+        <div class="muted">Solve 6 binary operations, then submit final result in hexadecimal.</div>
+        <div class="line" id="n1">Binary Number 1: --</div>
+        <div class="line" id="n2">Binary Number 2: --</div>
+        <div class="q" id="question">Loading challenge...</div>
+        <input id="answer" placeholder="Enter answer" autocomplete="off" />
+        <div class="row">
+            <button id="submit">Submit</button>
+            <button id="restart">Restart</button>
+            <button onclick="window.location='medium.html'">Back</button>
+        </div>
+        <div id="msg"></div>
+    </div>
+
+<script>
+    const n1 = document.getElementById('n1');
+    const n2 = document.getElementById('n2');
+    const question = document.getElementById('question');
+    const answer = document.getElementById('answer');
+    const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submit');
+    const restartBtn = document.getElementById('restart');
+
+    async function start() {
+        const res = await fetch('/binhexa/start', { method: 'POST' });
+        const data = await res.json();
+        n1.textContent = 'Binary Number 1: ' + data.bin1;
+        n2.textContent = 'Binary Number 2: ' + data.bin2;
+        question.textContent = data.prompt;
+        answer.value = '';
+        answer.focus();
+        msg.textContent = '';
+        msg.classList.remove('bad');
+    }
+
+    async function submit() {
+        const res = await fetch('/binhexa/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer.value.trim() })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.ok === false) {
+            msg.textContent = data.message || 'Incorrect answer!';
+            msg.classList.add('bad');
+            return;
+        }
+
+        msg.classList.remove('bad');
+        if (data.flag) {
+            msg.textContent = 'Flag: ' + data.flag;
+            question.textContent = 'Challenge completed.';
+            answer.value = '';
+            return;
+        }
+
+        msg.textContent = data.message || 'Correct!';
+        question.textContent = data.prompt;
+        answer.value = '';
+        answer.focus();
+    }
+
+    submitBtn.addEventListener('click', submit);
+    restartBtn.addEventListener('click', start);
+    answer.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+    start();
+</script>
+</body>
+</html>`;
+}
+
 function renderMirror(token) {
     const html = loadTemplate('mirror.html');
     return html.replace(/\{\{\s*token\s*\}\}/g, token);
@@ -432,6 +832,169 @@ app.get('/caesar-ctf/style.css', (req, res) => {
     return res.type('css').send(fs.readFileSync(CEASER_CIPHER_CSS, 'utf8'));
 });
 
+app.get('/find-location', (req, res) => {
+    try {
+        res.type('html').send(renderFindLocationChallenge());
+    } catch (err) {
+        res.status(500).json({ error: 'find location challenge not available' });
+    }
+});
+
+app.get('/find-location/image', (req, res) => {
+    if (!fs.existsSync(FIND_LOCATION_IMAGE)) {
+        return res.status(404).json({ error: 'location image not found' });
+    }
+    return res.download(FIND_LOCATION_IMAGE, 'location.jpg');
+});
+
+app.get('/morse-ctf', (req, res) => {
+    res.type('html').send(renderMorseChallenge());
+});
+
+app.get('/morse-ctf/audio', (req, res) => {
+    if (!fs.existsSync(MORSE_AUDIO_FILE)) {
+        return res.status(404).json({ error: 'morse.mp3 not found' });
+    }
+    return res.download(MORSE_AUDIO_FILE, 'morse.mp3');
+});
+
+app.get('/binhexa', (req, res) => {
+    res.type('html').send(renderBinhexaPage());
+});
+
+app.post('/binhexa/start', (req, res) => {
+    const clientId = getClientId(req);
+    const session = createBinhexaSession(clientId);
+    return res.json({
+        ok: true,
+        bin1: bin8(session.num1),
+        bin2: bin8(session.num2),
+        prompt: `Question 1/6 — Operation '${session.operations[0].op}'`
+    });
+});
+
+app.post('/binhexa/answer', (req, res) => {
+    const clientId = getClientId(req);
+    const session = binhexaSessions[clientId];
+    const answer = String(req.body && req.body.answer || '').trim();
+
+    if (!session) {
+        return res.status(400).json({ ok: false, message: 'Session not started. Click Restart.' });
+    }
+    if (!answer) {
+        return res.status(400).json({ ok: false, message: 'Enter an answer first.' });
+    }
+
+    if (session.step < 6) {
+        const opInfo = session.operations[session.step];
+        if (answer !== opInfo.expected) {
+            delete binhexaSessions[clientId];
+            return res.status(400).json({ ok: false, message: 'Incorrect answer! Session reset. Click Restart.' });
+        }
+
+        session.step += 1;
+        if (session.step === 6) {
+            return res.json({ ok: true, message: 'Correct! Final step: enter the result in hexadecimal.', prompt: 'Final Question — Enter hex for last result' });
+        }
+        return res.json({ ok: true, message: 'Correct!', prompt: `Question ${session.step + 1}/6 — Operation '${session.operations[session.step].op}'` });
+    }
+
+    const expectedHex = parseInt(session.operations[5].expected, 2).toString(16);
+    if (answer.toLowerCase() !== expectedHex) {
+        delete binhexaSessions[clientId];
+        return res.status(400).json({ ok: false, message: 'Incorrect hex answer! Session reset. Click Restart.' });
+    }
+
+    delete binhexaSessions[clientId];
+    return res.json({ ok: true, flag: BINHEXA_FLAG });
+});
+
+app.get('/hashcrack', (req, res) => {
+    res.type('html').send(renderHashcrackChallenge());
+});
+
+app.post('/hashcrack/start', (req, res) => {
+    const clientId = getClientId(req);
+    hashcrackSessions[clientId] = { step: 0, createdAt: Date.now() };
+    return res.json({ ok: true, index: 1, hash: hashcrackHashes[0] });
+});
+
+app.post('/hashcrack/answer', (req, res) => {
+    const clientId = getClientId(req);
+    const session = hashcrackSessions[clientId];
+    const answer = String(req.body && req.body.answer || '').trim();
+
+    if (!session) {
+        return res.status(400).json({ ok: false, message: 'Session not started. Click Restart.' });
+    }
+    if (!answer) {
+        return res.status(400).json({ ok: false, message: 'Enter plaintext first.' });
+    }
+
+    const expected = hashcrackPasswords[session.step];
+    if (answer !== expected) {
+        delete hashcrackSessions[clientId];
+        return res.status(400).json({ ok: false, message: 'Wrong answer. Session reset.' });
+    }
+
+    session.step += 1;
+    if (session.step >= hashcrackPasswords.length) {
+        delete hashcrackSessions[clientId];
+        return res.json({ ok: true, flag: HASHCRACK_FLAG });
+    }
+
+    return res.json({
+        ok: true,
+        message: 'Correct!',
+        index: session.step + 1,
+        hash: hashcrackHashes[session.step]
+    });
+});
+
+app.get('/mindreader', (req, res) => {
+    res.type('html').send(renderMindreaderChallenge());
+});
+
+app.post('/mindreader/start', (req, res) => {
+    const clientId = getClientId(req);
+    mindreaderSessions[clientId] = {
+        secret: Math.floor(Math.random() * 1000) + 1,
+        attempts: 10,
+        createdAt: Date.now()
+    };
+    return res.json({ ok: true, attempts: 10 });
+});
+
+app.post('/mindreader/guess', (req, res) => {
+    const clientId = getClientId(req);
+    const session = mindreaderSessions[clientId];
+    const guess = Number(String(req.body && req.body.guess || '').trim());
+
+    if (!session) {
+        return res.status(400).json({ ok: false, message: 'Session not started. Click Restart.' });
+    }
+    if (!Number.isInteger(guess) || guess < 1 || guess > 1000) {
+        return res.status(400).json({ ok: false, message: 'Enter a valid integer between 1 and 1000.' });
+    }
+
+    session.attempts -= 1;
+
+    if (guess === session.secret) {
+        delete mindreaderSessions[clientId];
+        return res.json({ ok: true, attempts: session.attempts, flag: MINDREADER_FLAG });
+    }
+
+    if (session.attempts <= 0) {
+        delete mindreaderSessions[clientId];
+        return res.json({ ok: true, status: 'lost', attempts: 0, message: 'Out of attempts. Better luck next time.' });
+    }
+
+    if (guess < session.secret) {
+        return res.json({ ok: true, status: 'low', attempts: session.attempts });
+    }
+    return res.json({ ok: true, status: 'high', attempts: session.attempts });
+});
+
 app.get('/download/mbits', (req, res) => {
     if (!fs.existsSync(MBITS_IMAGE_FILE)) {
         return res.status(404).json({ error: 'mbits.png not found' });
@@ -444,6 +1007,20 @@ app.get('/download/simple', (req, res) => {
         return res.status(404).json({ error: 'simple.png not found' });
     }
     return res.download(SIMPLE_IMAGE_FILE, 'simple.png');
+});
+
+app.get('/download/simple-zip', (req, res) => {
+    if (!fs.existsSync(SIMPLE_ZIP_FILE)) {
+        return res.status(404).json({ error: 'simple.zip not found' });
+    }
+    return res.download(SIMPLE_ZIP_FILE, 'simple.zip');
+});
+
+app.get('/download/final', (req, res) => {
+    if (!fs.existsSync(FINAL_IMAGE_FILE)) {
+        return res.status(404).json({ error: 'final.png not found' });
+    }
+    return res.download(FINAL_IMAGE_FILE, 'final.png');
 });
 
 // Mirror of Erised routes (ported from mirror-of-erised-ctf/app.py)
@@ -569,7 +1146,7 @@ const server = app.listen(PORT, () => {
     console.log('🔐 CTF Verification Server Started');
     console.log(`URL: http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /download/mbits, /download/simple, /hogwarts/*, /evilcorp`);
+    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /binhexa/*, /hashcrack/*, /mindreader/*, /find-location/*, /morse-ctf/*, /download/mbits, /download/simple, /download/simple-zip, /download/final, /hogwarts/*, /evilcorp`);
     console.log(`${'='.repeat(50)}\n`);
 });
 
