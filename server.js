@@ -36,6 +36,7 @@ const MBITS_IMAGE_FILE = path.join(__dirname, 'mbits.png');
 const FINAL_IMAGE_FILE = path.join(__dirname, 'final.png');
 const SIMPLE_IMAGE_FILE = path.join(__dirname, 'simple.png');
 const SIMPLE_ZIP_FILE = path.join(__dirname, 'simple.zip');
+const MBITS_ROBOTS_DIR = path.join(__dirname, 'mbits_robots_ctf');
 const MIRROR_TEMPLATES = path.join(__dirname, 'mirror-of-erised-ctf', 'templates');
 const mirrorLeaks = [];
 const EVILCORP_DIR = path.join(__dirname, 'sql evilcorp_ctf');
@@ -1023,6 +1024,8 @@ app.get('/download/final', (req, res) => {
     return res.download(FINAL_IMAGE_FILE, 'final.png');
 });
 
+app.use('/robots-ctf', express.static(MBITS_ROBOTS_DIR));
+
 // Mirror of Erised routes (ported from mirror-of-erised-ctf/app.py)
 app.get('/mirror-of-erised', (req, res) => {
     res.type('html').send(
@@ -1146,7 +1149,7 @@ const server = app.listen(PORT, () => {
     console.log('🔐 CTF Verification Server Started');
     console.log(`URL: http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /binhexa/*, /hashcrack/*, /mindreader/*, /find-location/*, /morse-ctf/*, /download/mbits, /download/simple, /download/simple-zip, /download/final, /hogwarts/*, /evilcorp`);
+    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /binhexa/*, /hashcrack/*, /mindreader/*, /find-location/*, /morse-ctf/*, /robots-ctf/*, /download/mbits, /download/simple, /download/simple-zip, /download/final, /hogwarts/*, /evilcorp`);
     console.log(`${'='.repeat(50)}\n`);
 });
 

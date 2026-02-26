@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Where Are The Robots?</title>
+
+<style>
+
+/* ===== PAGE BASE ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: #000;
+    font-family: "Courier New", monospace;
+    color: #00ff9f;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* ===== CRT SCANLINES ===== */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        rgba(0,0,0,0.2) 0px,
+        rgba(0,0,0,0.2) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+}
+
+/* ===== TERMINAL CONTAINER ===== */
+.terminal {
+    margin-top: 120px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== GLITCH TITLE ===== */
+.glitch {
+    font-size: 42px;
+    color: #00ff9f;
+    animation: flicker 2s infinite;
+}
+
+@keyframes flicker {
+    0% {opacity:1;}
+    50% {opacity:0.85;}
+    100% {opacity:1;}
+}
+
+/* ===== BLINKING CURSOR ===== */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    background: #00ff9f;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,50%,100% {opacity:1;}
+    25%,75% {opacity:0;}
+}
+
+/* ===== TEXT ===== */
+p {
+    font-size: 18px;
+    color: #cfcfcf;
+    line-height: 1.6;
+}
+
+/* ===== STRONG TEXT (UPDATED SIZE) ===== */
+strong {
+    font-size: 28px;
+    color: #00ff9f;
+    text-shadow: 0 0 8px #00ff9f;
+}
+/* ===== HINT STYLE ===== */
+.hint {
+    color: #ff004c;
+    margin-top: 25px;
+    font-size: 25px;
+    font-style: italic;
+    text-shadow: 0 0 6px #ff004c;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="terminal">
+
+<h1 class="glitch">  WHERE ARE THE ROBOTS?</h1>
+
+
+<p>The flag is not here...</p>
+
+<p>
+--- fsociety internal notes ---<br><br>
+
+
+The web server speaks more than the page does.<br>
+Not every <strong>directory</strong> wants visitors.<br>
+Some only request robots to stay away.<br><br>
+
+<strong>If you were a crawler, where would you check first?
+  </strong><br><br>
+
+-- end transmission --
+</p>
+
+<p class="hint">
+ A txt FILE NAMED ROBOTS.!!? 
+</p>
+
+<p>> root@fsociety:~$<span class="cursor"></span></p>
+
+</div>
+
+</body>
+</html>

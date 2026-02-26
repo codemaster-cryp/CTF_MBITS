@@ -1,0 +1,4 @@
+python3 -m http.server 8080 run in terminal
+search:http://localhost:8080/
+add thid to url:http://localhost:8080/robots.txt
+flag:mbits{fsociety_was_here}
