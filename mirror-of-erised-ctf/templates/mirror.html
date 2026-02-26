@@ -1,9 +1,115 @@
 <!DOCTYPE html>
-<html>
-<head><title>The Mirror of Erised</title></head>
-<body style="background:black; color:gold;">
-    <h1>🪞 Mirror of Erised</h1>
-    <p>The Philosopher’s Stone is hidden behind the Mirror of Erised.</p>
-    <p style="opacity:0.1;">Token: ?stone={{ token }}</p>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Mirror of Erised</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: radial-gradient(circle at center, #0b0b0f 0%, #000000 80%);
+        font-family: "Garamond", serif;
+        color: #d4af37;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Magical frame container */
+    .mirror-frame {
+        width: 70%;
+        max-width: 800px;
+        padding: 40px;
+        border: 6px solid #d4af37;
+        border-radius: 20px;
+        box-shadow:
+            0 0 25px rgba(212,175,55,0.5),
+            inset 0 0 30px rgba(212,175,55,0.2);
+        background: linear-gradient(
+            180deg,
+            rgba(15,15,20,0.95),
+            rgba(5,5,10,0.98)
+        );
+        text-align: center;
+        position: relative;
+    }
+
+    /* Subtle magical glow animation */
+    .mirror-frame::before {
+        content: "";
+        position: absolute;
+        inset: -3px;
+        border-radius: 22px;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(212,175,55,0.4),
+            transparent
+        );
+        animation: shimmer 6s infinite linear;
+        z-index: -1;
+    }
+
+    @keyframes shimmer {
+        0% { opacity: 0.2; }
+        50% { opacity: 0.6; }
+        100% { opacity: 0.2; }
+    }
+
+    h1 {
+        font-size: 3em;
+        letter-spacing: 2px;
+        text-shadow: 0 0 12px rgba(212,175,55,0.7);
+        margin-bottom: 20px;
+    }
+
+    .inscription {
+        font-style: italic;
+        color: #f5e6a5;
+        margin-bottom: 30px;
+        font-size: 1.2em;
+    }
+
+    /* Hidden text */
+    .secret {
+        opacity: 0.05;
+        font-size: 0.9em;
+        letter-spacing: 2px;
+    }
+
+    /* Mirror reflection effect */
+    .reflection {
+        margin-top: 25px;
+        transform: scaleY(-1);
+        opacity: 0.15;
+        filter: blur(2px);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="mirror-frame">
+    <h1>🪞 The Mirror of Erised</h1>
+
+    <p class="inscription">
+        “Erised stra ehru oyt ube cafru oyt on wohsi.”
+    </p>
+
+    <p>
+        The Philosopher’s Stone lies not where it is seen,
+        but where it is truly desired.
+    </p>
+
+    <!-- Hidden clue -->
+    <p class="secret">mbits{undoing_5_9}</p>
+
+    <!-- Reflection illusion -->
+    <div class="reflection">
+        <h1>🪞 The Mirror of Erised</h1>
+    </div>
+</div>
+
 </body>
 </html>

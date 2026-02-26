@@ -31,8 +31,12 @@ window.enterCTF = function() {
 };
 
 function getApiBaseUrl() {
-    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    return isDev ? 'http://localhost:3000' : window.location.origin;
+    const host = window.location.hostname;
+    const protocol = window.location.protocol;
+    const isLocalhost = host === 'localhost' || host === '127.0.0.1';
+    const isFile = protocol === 'file:';
+    if (isLocalhost || isFile) return 'http://localhost:3000';
+    return window.location.origin;
 }
 
 function initMatrix() {
@@ -219,6 +223,16 @@ async function submitEntry(form) {
         if (j && j.valid) {
             status.style.color = '#bfffcf';
             status.textContent = 'Verified — welcome, ' + name + '.';
+            localStorage.setItem('ctf_player_name', name);
+            try {
+                await fetch(`${getApiBaseUrl()}/overwatch/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+            } catch (registrationError) {
+                console.warn('[CTF] Overwatch registration failed:', registrationError);
+            }
             // hide modal after a short pause
             setTimeout(() => {
                 document.getElementById('entry-modal').setAttribute('aria-hidden', 'true');

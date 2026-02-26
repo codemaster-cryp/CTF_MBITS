@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title> Flag Reconstruction</title>
+
+<style>
+
+/* ===== PAGE BASE ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: #000;
+    font-family: "Courier New", monospace;
+    color: #00ff9f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* ===== CRT SCANLINES ===== */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        rgba(0,0,0,0.2) 0px,
+        rgba(0,0,0,0.2) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+}
+
+/* ===== TERMINAL WINDOW ===== */
+.terminal {
+    width: 650px;
+    padding: 40px;
+    border: 1px solid #00ff9f;
+    background: rgba(0,0,0,0.85);
+    box-shadow: 0 0 25px #00ff9f33;
+    text-align: center;
+}
+
+/* ===== TITLE ===== */
+h1 {
+    margin-top: 0;
+    font-size: 28px;
+    text-shadow: 0 0 10px #00ff9f;
+}
+
+/* ===== SYSTEM TEXT ===== */
+.system {
+    color: #5fd7ff;
+    margin-bottom: 15px;
+}
+
+/* ===== FLAG DISPLAY ===== */
+#flag-display {
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin: 25px 0;
+    min-height: 40px;
+    color: #5fd7ff;
+    word-wrap: break-word;
+}
+
+/* ===== BUTTON ===== */
+button {
+    background: transparent;
+    border: 2px solid #00ff9f;
+    color: #FF0000;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+/* glowing border */
+button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(0,255,159,0.4),
+        transparent
+    );
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+/* hover animation */
+button:hover::before {
+    transform: translateX(100%);
+}
+
+button:hover {
+    color: black;
+    background: #00ff9f;
+    box-shadow:
+        0 0 10px #00ff9f,
+        0 0 25px #00ff9f,
+        0 0 50px #00ff9f;
+}
+
+/* click effect */
+button:active {
+    transform: scale(0.95);
+    box-shadow:
+        0 0 5px #00ff9f,
+        0 0 15px #00ff9f inset;
+}
+
+/* ===== TERMINAL PROMPT ===== */
+.prompt {
+    margin-top: 20px;
+    color: #888;
+}
+
+/* BLINK CURSOR */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background: #00ff9f;
+    margin-left: 6px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,50%,100% {opacity:1;}
+    25%,75% {opacity:0;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="terminal">
+
+<h1> FLAG RECONSTRUCTION</h1>
+
+<div class="system">
+> Easy task: click your mouse as fast as humanly possible for 10 seconds and witness your true clicking power!.<br>
+
+</div>
+
+<div id="flag-display"></div>
+
+<button id="reveal-btn">Reveal Next Letter</button>
+
+<div class="prompt">
+root@fsociety:~$<span class="cursor"></span>
+</div>
+
+</div>
+
+<script>
+const flag = "bWJpdHN7Y29udHJvbF9pc19hbl9pbGx1c2lvbn0=";
+let index = 0;
+
+const display = document.getElementById("flag-display");
+const button = document.getElementById("reveal-btn");
+
+button.addEventListener("click", () => {
+    if (index < flag.length) {
+        display.textContent += flag[index];
+        index++;
+    } else {
+        alert("Transmission complete.");
+    }
+});
+</script>
+
+</body>
+</html>

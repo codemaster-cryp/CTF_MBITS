@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Overwatch Scoreboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .button-group { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 12px; z-index: 40; }
+        .button-group button { padding: 12px 24px; background: linear-gradient(180deg, rgba(0,26,22,0.55), rgba(0,0,0,0.48)); border: 1.5px solid #00ffcc; color: #00ffcc; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.24s ease; border-radius: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 18px rgba(0,255,204,0.18); position: relative; overflow: hidden; }
+        .button-group button::before { content: ''; position: absolute; top: -120%; left: -40%; width: 36%; height: 320%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(208,255,246,0.75), rgba(255,255,255,0)); transform: rotate(18deg) translateX(-220%); opacity: 0; pointer-events: none; }
+        .button-group button:hover { transform: translateY(-4px) scale(1.03); background: rgba(0,255,204,0.14); box-shadow: 0 0 20px rgba(0,255,204,0.82), 0 0 36px rgba(0,255,204,0.38), 0 10px 22px rgba(0,0,0,0.35); }
+        .button-group button:hover::before { opacity: 0.95; animation: overwatchSweep 0.95s cubic-bezier(.2,.8,.2,1) forwards; }
+        @keyframes overwatchSweep { from { transform: rotate(18deg) translateX(-220%); } to { transform: rotate(18deg) translateX(360%); } }
+
+        body { overflow-y: auto; }
+        .container { margin-top: 10%; }
+
+        .overwatch-board {
+            width: min(1040px, 92vw);
+            margin: 26px auto 70px;
+            border: 1.5px solid rgba(0, 255, 204, 0.35);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(0, 16, 14, 0.7), rgba(4, 32, 28, 0.55));
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 0 18px rgba(0, 255, 204, 0.12);
+            padding: 16px 16px 12px;
+            position: relative;
+            overflow: hidden;
+            z-index: 3;
+        }
+
+        .overwatch-board::before {
+            content: '';
+            position: absolute;
+            inset: -70% 45% auto -30%;
+            height: 240%;
+            background: radial-gradient(circle, rgba(0,255,204,0.12), rgba(0,255,204,0));
+            pointer-events: none;
+        }
+
+        .overwatch-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .overwatch-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #9affea;
+            text-transform: uppercase;
+            text-shadow: 0 0 14px rgba(0,255,204,0.35);
+        }
+
+        .overwatch-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            font-size: 12px;
+            color: #c8fff3;
+        }
+
+        .meta-chip {
+            border: 1px solid rgba(0,255,204,0.3);
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(0,255,204,0.08);
+        }
+
+        .live-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-chip::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6fffe4;
+            box-shadow: 0 0 0 0 rgba(111,255,228,0.65);
+            animation: livePulse 1.6s ease-out infinite;
+        }
+
+        @keyframes livePulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(111,255,228,0.65);
+                opacity: 1;
+            }
+            70% {
+                box-shadow: 0 0 0 9px rgba(111,255,228,0);
+                opacity: 0.9;
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(111,255,228,0);
+                opacity: 0.75;
+            }
+        }
+
+        .overwatch-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .overwatch-panel {
+            border: 1px solid rgba(0,255,204,0.22);
+            border-radius: 14px;
+            background: rgba(2, 14, 12, 0.6);
+            overflow: hidden;
+        }
+
+        .panel-label {
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #94f7df;
+            padding: 10px 12px 8px;
+            border-bottom: 1px solid rgba(0,255,204,0.18);
+            background: rgba(0,255,204,0.06);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 10px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,255,204,0.1);
+            color: #defff7;
+        }
+
+        .leaderboard-table thead th {
+            color: #87e8d2;
+            font-size: 11px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            background: rgba(0,255,204,0.04);
+        }
+
+        .leaderboard-table tbody tr:nth-child(even) {
+            background: rgba(0,255,204,0.03);
+        }
+
+        .leaderboard-table tbody tr.you {
+            background: rgba(0,255,204,0.12);
+            box-shadow: inset 0 0 0 1px rgba(0,255,204,0.35);
+        }
+
+        .score-pill {
+            font-weight: 700;
+            color: #b0fff0;
+        }
+
+        .activity-list {
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        .activity-item {
+            border: 1px solid rgba(0,255,204,0.18);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(0,255,204,0.05);
+            color: #d8fff5;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .activity-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .activity-name {
+            font-weight: 700;
+            color: #9af6df;
+        }
+
+        .difficulty-badge {
+            font-size: 10px;
+            border-radius: 999px;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border: 1px solid transparent;
+        }
+
+        .difficulty-badge.easy { color: #8cf9db; border-color: rgba(68,255,213,0.55); background: rgba(68,255,213,0.12); }
+        .difficulty-badge.medium { color: #fff78a; border-color: rgba(255,236,120,0.6); background: rgba(255,236,120,0.12); }
+        .difficulty-badge.hard { color: #ff9aac; border-color: rgba(255,95,124,0.6); background: rgba(255,95,124,0.12); }
+
+        .activity-flag {
+            color: #eafff9;
+            word-break: break-all;
+        }
+
+        .activity-points {
+            color: #8ef8df;
+            font-weight: 700;
+        }
+
+        .activity-empty,
+        .leaderboard-empty {
+            color: #9fd8cd;
+            padding: 14px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .overwatch-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overwatch-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .leaderboard-table {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .overwatch-board {
+                width: 95vw;
+                padding: 12px 10px 10px;
+            }
+
+            .overwatch-title {
+                font-size: 17px;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 8px 7px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-image"></div>
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <h1 class="glitch" data-text="OVERWATCH">OVERWATCH</h1>
+    <p class="subtitle">Live CTF scoreboard and flag activity feed.</p>
+</div>
+
+<section class="overwatch-board" id="overwatch-board">
+    <div class="overwatch-head">
+        <div class="overwatch-title">Overwatch Live Scoreboard</div>
+        <div class="overwatch-meta">
+            <span class="meta-chip" id="overwatch-player">Player: --</span>
+            <span class="meta-chip" id="overwatch-max">Max Score: --</span>
+            <span class="meta-chip live-chip" id="overwatch-updated">Live</span>
+        </div>
+    </div>
+    <div class="overwatch-grid">
+        <div class="overwatch-panel">
+            <div class="panel-label">Rankings</div>
+            <div id="overwatch-leaderboard" class="leaderboard-empty">Waiting for first verified flag...</div>
+        </div>
+        <div class="overwatch-panel">
+            <div class="panel-label">Recent Flag Activity</div>
+            <ul id="overwatch-activity" class="activity-list">
+                <li class="activity-empty">No activity yet.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div class="button-group">
+    <button onclick="window.location='verify.html'">FLAG VERIFICATION</button>
+    <button onclick="window.location='control-room.html'">TO CONTROL ROOM</button>
+    <button onclick="adminResetOverwatch()" style="background: rgba(255,0,0,0.1); border-color: #ff4444; color: #ff4444;">ADMIN RESET</button>
+</div>
+
+<script src="script.js"></script>
+<script>
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    if (typeof initMatrix === 'function') initMatrix();
+    setTimeout(() => {
+        const hdr = document.querySelector('.glitch');
+        if (hdr) hdr.classList.add('glitch-animate');
+    }, 520);
+    setTimeout(() => {
+        if (typeof animateSubtitle === 'function') animateSubtitle();
+    }, 720);
+    setTimeout(() => {
+        if (typeof decryptHeader === 'function') decryptHeader();
+    }, 600);
+    startOverwatchPolling();
+});
+
+function getApiBaseUrl() {
+    const host = window.location.hostname;
+    const protocol = window.location.protocol;
+    const isLocalhost = host === 'localhost' || host === '127.0.0.1';
+    const isFile = protocol === 'file:';
+    if (isLocalhost || isFile) return 'http://localhost:3000';
+    return window.location.origin;
+}
+
+function getPlayerName() {
+    return (localStorage.getItem('ctf_player_name') || '').trim();
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatRelativeTime(isoString) {
+    if (!isoString) return '--';
+    const diffMs = Date.now() - new Date(isoString).getTime();
+    if (Number.isNaN(diffMs)) return '--';
+    const seconds = Math.max(0, Math.floor(diffMs / 1000));
+    if (seconds < 60) return `${seconds}s ago`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+}
+
+function renderOverwatch(data) {
+    const playerName = getPlayerName();
+    const playerChip = document.getElementById('overwatch-player');
+    const maxChip = document.getElementById('overwatch-max');
+    const updatedChip = document.getElementById('overwatch-updated');
+    if (playerChip) playerChip.textContent = `Player: ${playerName || 'Not verified yet'}`;
+    if (maxChip) maxChip.textContent = `Max Score: ${data.maxScore || 0}`;
+    if (updatedChip) updatedChip.textContent = `Updated: ${formatRelativeTime(data.updatedAt)}`;
+
+    const leaderboardDiv = document.getElementById('overwatch-leaderboard');
+    const leaderboard = Array.isArray(data.leaderboard) ? data.leaderboard : [];
+    if (!leaderboardDiv) return;
+
+    if (!leaderboard.length) {
+        leaderboardDiv.className = 'leaderboard-empty';
+        leaderboardDiv.textContent = 'Waiting for first verified flag...';
+    } else {
+        const rows = leaderboard.slice(0, 12).map((entry) => {
+            const isYou = playerName && entry.name.toLowerCase() === playerName.toLowerCase();
+            return `<tr class="${isYou ? 'you' : ''}">
+                <td>#${entry.rank}</td>
+                <td>${escapeHtml(entry.name)}</td>
+                <td><span class="score-pill">${entry.score}/${entry.maxScore}</span></td>
+                <td>${entry.easy}/${entry.medium}/${entry.hard}</td>
+                <td>${entry.totalFlags}</td>
+            </tr>`;
+        }).join('');
+
+        leaderboardDiv.className = '';
+        leaderboardDiv.innerHTML = `<table class="leaderboard-table">
+            <thead>
+                <tr><th>Rank</th><th>Hacker</th><th>Score</th><th>E/M/H</th><th>Flags</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    const activityList = document.getElementById('overwatch-activity');
+    if (!activityList) return;
+    const activity = Array.isArray(data.activity) ? data.activity : [];
+    if (!activity.length) {
+        activityList.innerHTML = '<li class="activity-empty">No activity yet.</li>';
+        return;
+    }
+
+    activityList.innerHTML = activity.slice(0, 14).map((item) => `
+        <li class="activity-item">
+            <div class="activity-top">
+                <span class="activity-name">${escapeHtml(item.playerName)}</span>
+                <span class="difficulty-badge ${escapeHtml(item.difficulty)}">${escapeHtml(item.difficulty)}</span>
+            </div>
+            <div class="activity-flag">${escapeHtml(item.flag)}</div>
+            <div><span class="activity-points">+${item.points} pts</span> • ${formatRelativeTime(item.timestamp)}</div>
+        </li>
+    `).join('');
+}
+
+async function refreshOverwatch() {
+    try {
+        const res = await fetch(`${getApiBaseUrl()}/overwatch`);
+        if (!res.ok) {
+            if (res.status === 404) {
+                const updatedChip = document.getElementById('overwatch-updated');
+                const leaderboardDiv = document.getElementById('overwatch-leaderboard');
+                if (updatedChip) updatedChip.textContent = 'Server outdated';
+                if (leaderboardDiv) {
+                    leaderboardDiv.className = 'leaderboard-empty';
+                    leaderboardDiv.textContent = 'Overwatch API not found. Restart server with latest server.js';
+                }
+                return;
+            }
+            throw new Error(`HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        renderOverwatch(data);
+    } catch (e) {
+        const updatedChip = document.getElementById('overwatch-updated');
+        if (updatedChip) updatedChip.textContent = 'Live (offline)';
+        console.warn('[CTF] Overwatch refresh failed:', e);
+    }
+}
+
+function startOverwatchPolling() {
+    refreshOverwatch();
+    if (window.__overwatchPoller) clearInterval(window.__overwatchPoller);
+    window.__overwatchPoller = setInterval(refreshOverwatch, 4000);
+}
+
+async function adminResetOverwatch() {
+    const code = prompt('Admin code required to reset Overwatch logs:');
+    if (code === null) return;
+
+    try {
+        const res = await fetch(`${getApiBaseUrl()}/overwatch/reset`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ adminCode: code })
+        });
+        if (res.status === 404) {
+            alert('Reset endpoint not available. Restart server with latest server.js.');
+            return;
+        }
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok || !result.ok) {
+            alert(result.message || 'Reset failed. Invalid admin code or server error.');
+            return;
+        }
+        alert('Overwatch logs reset successfully.');
+        refreshOverwatch();
+    } catch (err) {
+        console.error('[CTF] Overwatch reset error:', err);
+        alert('Reset failed. Ensure verification server is running.');
+    }
+}
+</script>
+</body>
+</html>

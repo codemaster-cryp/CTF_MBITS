@@ -1,16 +1,26 @@
 {
   "easy": [
-    "{STEGANOGRAPHY_HIDDEN}",
-    "FLAG{BASIC_CRYPTOGRAPHY}",
-    "FLAG{PACMAN_CHAMPION}"
+    "mbits{djgonde}",
+    "mbits{Elliot Alderson}",
+    "mBits{power_Belongs_to_the_people}",
+    "mbits{undoing_5_9}",
+    "mbits{control_is_an_illution}",
+    "MBITS{hello friend}",
+    "mbits{leader_of_the_dark_army}",
+    "MBITS{THE_SYSTEM_IS_RIGGED!}"
+
   ],
   "medium": [
-    "FLAG{WEB_SECURITY}",
-    "FLAG{LOGIC_SOLVED}",
-    "FLAG{ENCODING_MASTERY}"
+    "mbits{elliots_mind_is_root}",
+    "mbits{petit}",
+    "mbits{Darlene @lderson}",
+    "mbits{elliots_mind_is_root!}",
+    "mbits{mrrobot_knows_you}",
+    "mbits{we_are_fsociety}",
+    "mbits{the_cat_task}"
   ],
   "hard": [
-    "FLAG{REVERSING_EFLAGXPERT}",
-    "FLAG{TRIVIA_GENIUS}"
+    "mbits{evil_corp_is_e_corp}",
+    "mbits{fsociety_was_here}"
   ]
 }

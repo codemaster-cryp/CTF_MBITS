@@ -348,6 +348,7 @@
 <div class="button-group">
     <button onclick="window.location='control-room.html'">TO CONTROL ROOM</button>
     <button onclick="resetProgress()" style="background: rgba(255,0,0,0.1); border-color: #ff4444; color: #ff4444;">RESET PROGRESS</button>
+    <button onclick="window.location='overwatch.html'">OVERWATCH</button>
 </div>
 <!-- Winner celebration modal -->
 <div id="winner-modal" class="winner-overlay" aria-hidden="true">
@@ -367,8 +368,8 @@
         <h1 class="winner-title">🎉 CHAMPION HACKER 🎉</h1>
         <p class="winner-message">You've conquered all challenges!<br/>All flags verified successfully.</p>
         <div class="winner-stats">
-            <div class="stat-box"><span class="stat-num">3</span><span class="stat-label">Easy</span></div>
-            <div class="stat-box"><span class="stat-num">3</span><span class="stat-label">Medium</span></div>
+            <div class="stat-box"><span class="stat-num">8</span><span class="stat-label">Easy</span></div>
+            <div class="stat-box"><span class="stat-num">7</span><span class="stat-label">Medium</span></div>
             <div class="stat-box"><span class="stat-num">2</span><span class="stat-label">Hard</span></div>
         </div>
         <p class="winner-prize">💰 Report to CTF Admin to claim your CASH PRIZE! 💰</p>
@@ -466,7 +467,7 @@ function checkWinCondition(progress) {
     const easy = progress.easy.length;
     const medium = progress.medium.length;
     const hard = progress.hard.length;
-    if (easy >= 3 && medium >= 3 && hard >= 2) {
+    if (easy >= 8 && medium >= 7 && hard >= 2) {
         setTimeout(() => {
             showWinnerModal();
         }, 1500);
@@ -490,7 +491,7 @@ function resetProgress() {
     if (confirm('Reset all flag progress? This will clear all verified flags.')) {
         localStorage.removeItem('ctf_verified_flags');
         updateProgressDisplay();
-        alert('Progress reset to 0/8. Ready for next test run.');
+        alert('Progress reset to 0/17. Ready for next test run.');
     }
 }
 
@@ -562,9 +563,9 @@ function updateProgressDisplay() {
     const medium = progress.medium ? progress.medium.length : 0;
     const hard = progress.hard ? progress.hard.length : 0;
     const total = easy + medium + hard;
-    const max = 3 + 3 + 2;
+    const max = 8 + 7 + 2;
     const progressDiv = document.getElementById('progress-display') || createProgressDisplay();
-    progressDiv.innerHTML = `<strong>Flags Verified:</strong> Easy: ${easy}/3 | Medium: ${medium}/3 | Hard: ${hard}/2 (Total: ${total}/${max})`;
+    progressDiv.innerHTML = `<strong>Flags Verified:</strong> Easy: ${easy}/8 | Medium: ${medium}/7 | Hard: ${hard}/2 (Total: ${total}/${max})`;
 }
 
 function createProgressDisplay() {
@@ -577,13 +578,27 @@ function createProgressDisplay() {
 }
 
 function getApiBaseUrl() {
-    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    return isDev ? 'http://localhost:3000' : window.location.origin;
+    const host = window.location.hostname;
+    const protocol = window.location.protocol;
+    const isLocalhost = host === 'localhost' || host === '127.0.0.1';
+    const isFile = protocol === 'file:';
+    if (isLocalhost || isFile) return 'http://localhost:3000';
+    return window.location.origin;
+}
+
+function getPlayerName() {
+    return (localStorage.getItem('ctf_player_name') || '').trim();
 }
 
 async function submitFlag(form) {
     const status = document.getElementById('verify-status');
     const flag = document.getElementById('verify-flag').value.trim();
+    const playerName = getPlayerName();
+    if (!playerName) {
+        status.style.color = '#ffd1d1';
+        status.textContent = 'Verify from the landing page first so Overwatch can track your score.';
+        return;
+    }
     if (!flag) {
         status.textContent = 'Please enter a flag.';
         return;
@@ -595,7 +610,7 @@ async function submitFlag(form) {
         const res = await fetch(url, {
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ flag: flag })
+            body: JSON.stringify({ flag: flag, playerName })
         });
         
         if (!res.ok) {
@@ -616,7 +631,16 @@ async function submitFlag(form) {
                 saveProgress(progress);
             }
             status.style.color = '#bfffcf';
-            status.textContent = '✓ Flag verified successfully!';
+            if (typeof j.pointsAwarded === 'undefined' || typeof j.score === 'undefined') {
+                status.style.color = '#ffd1d1';
+                status.textContent = 'Flag verified, but server is outdated for Overwatch scoring. Restart server.js.';
+                return;
+            }
+            if (j.duplicate) {
+                status.textContent = `✓ Flag already counted for ${playerName}. Score stays ${j.score}/${j.maxScore}.`;
+            } else {
+                status.textContent = `✓ Flag verified! +${j.pointsAwarded} points • Score ${j.score}/${j.maxScore}`;
+            }
             document.getElementById('verify-flag').value = '';
             setTimeout(() => {
                 document.getElementById('verify-modal').setAttribute('aria-hidden', 'true');

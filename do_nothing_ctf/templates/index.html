@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Do Nothing</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle at center, #111 0%, #000 80%);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 42px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, gold, #fff, gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px gold; }
+            to { text-shadow: 0 0 25px orange; }
+        }
+
+        .stars {
+            margin-top: 20px;
+            font-size: 35px;
+            color: gold;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        #flag {
+            margin-top: 30px;
+            font-size: 22px;
+            color: lime;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .show-flag {
+            opacity: 1 !important;
+        }
+
+        /* floating background particles */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            opacity: 0.5;
+            animation: float 10s linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateY(100vh); }
+            to { transform: translateY(-10vh); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Eat five star do Nothing</h1>
+    <div class="stars">★★★★★</div>
+    <div id="flag"></div>
+</div>
+
+<script>
+let timer;
+
+// background particles
+for (let i = 0; i < 50; i++) {
+    let particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = Math.random() * 100 + "vw";
+    particle.style.animationDuration = (5 + Math.random() * 10) + "s";
+    document.body.appendChild(particle);
+}
+
+async function startSession() {
+    await fetch("/start", { method: "POST" });
+}
+
+async function requestFlag() {
+    const response = await fetch("/flag", { method: "POST" });
+    const data = await response.json();
+
+    if (data.flag) {
+        const flagDiv = document.getElementById("flag");
+        flagDiv.innerText = data.flag;
+        flagDiv.classList.add("show-flag");
+    }
+}
+
+function resetTimer() {
+    clearTimeout(timer);
+    startSession();
+    timer = setTimeout(() => {
+        requestFlag();
+    }, 30000);
+}
+
+["mousemove", "mousedown", "keydown", "scroll", "touchstart"]
+.forEach(event => {
+    document.addEventListener(event, resetTimer);
+});
+
+window.onload = () => {
+    startSession();
+    timer = setTimeout(() => {
+        requestFlag();
+    }, 30000);
+};
+</script>
+
+</body>
+</html>

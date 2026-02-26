@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  sudoku:
+    build: ./challenge
+    ports:
+      - "5000:5000"
+

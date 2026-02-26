@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sudoku Cipher Challenge</title>
+
+<style>
+body { background: #111; color: white; text-align: center; font-family: monospace; }
+table { margin: auto; border-collapse: collapse; }
+td { border: 1px solid #444; }
+td:nth-child(3n) { border-right: 3px solid white; }
+tr:nth-child(3n) td { border-bottom: 3px solid white; }
+td:first-child { border-left: 3px solid white; }
+tr:first-child td { border-top: 3px solid white; }
+
+input {
+  width: 45px;
+  height: 45px;
+  text-align: center;
+  font-size: 20px;
+  background: black;
+  color: lime;
+  border: none;
+}
+
+input:disabled { background: #222; color: white; }
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#result { margin-top: 20px; color: cyan; }
+</style>
+</head>
+
+<body>
+
+<h1>Sudoku Cipher Challenge</h1>
+
+<!-- TIMER DISPLAY ADDED -->
+<h2>Time Left: <span id="timer">240</span> seconds</h2>
+
+<table id="grid"></table>
+<br>
+<button onclick="submitGrid()" id="submitBtn">Submit</button>
+<h2 id="result"></h2>
+
+<script>
+
+/* =========================
+   TIMER (1200 seconds)
+========================= */
+
+let timeLeft = 240;
+let timerExpired = false;
+const timerDisplay = document.getElementById("timer");
+const submitButton = document.getElementById("submitBtn");
+
+const countdown = setInterval(() => {
+  timeLeft--;
+  timerDisplay.innerText = timeLeft;
+
+  if (timeLeft <= 0) {
+    clearInterval(countdown);
+    timerExpired = true;
+    disableGrid();
+    submitButton.disabled = true;
+    document.getElementById("result").innerText = "Time's up!";
+  }
+}, 1000);
+
+function disableGrid() {
+  const inputs = document.querySelectorAll("input");
+  inputs.forEach(input => input.disabled = true);
+}
+
+/* =========================
+   ORIGINAL CODE (UNCHANGED)
+========================= */
+
+const puzzle = {{ puzzle | tojson }};
+const table = document.getElementById("grid");
+
+for (let i = 0; i < 9; i++) {
+  let row = document.createElement("tr");
+
+  for (let j = 0; j < 9; j++) {
+    let cell = document.createElement("td");
+    let input = document.createElement("input");
+
+    input.maxLength = 1;
+    input.id = `cell-${i}-${j}`;
+
+    if (puzzle[i][j] !== 0) {
+      input.value = puzzle[i][j];
+      input.disabled = true;
+    }
+
+    input.addEventListener("input", function () {
+      this.value = this.value.replace(/[^1-9]/g, '');
+      if (this.value.length === 1) {
+        moveToNextEmpty(i, j);
+      }
+    });
+
+    cell.appendChild(input);
+    row.appendChild(cell);
+  }
+
+  table.appendChild(row);
+}
+
+function moveToNextEmpty(row, col) {
+  for (let i = row; i < 9; i++) {
+    for (let j = (i === row ? col + 1 : 0); j < 9; j++) {
+      let nextCell = document.getElementById(`cell-${i}-${j}`);
+      if (!nextCell.disabled && nextCell.value === "") {
+        nextCell.focus();
+        return;
+      }
+    }
+  }
+}
+
+function submitGrid() {
+
+  if (timerExpired) {
+    document.getElementById("result").innerText = "Time expired!";
+    return;
+  }
+
+  let grid = [];
+
+  for (let i = 0; i < 9; i++) {
+    let row = [];
+    for (let j = 0; j < 9; j++) {
+      let value = document.getElementById(`cell-${i}-${j}`).value;
+      row.push(value === "" ? 0 : parseInt(value));
+    }
+    grid.push(row);
+  }
+
+  fetch("/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ grid: grid })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.flag) {
+      document.getElementById("result").innerText = data.flag;
+      clearInterval(countdown);
+    } else {
+      document.getElementById("result").innerText = "Wrong!";
+    }
+  });
+}
+
+</script>
+
+</body>
+</html>
