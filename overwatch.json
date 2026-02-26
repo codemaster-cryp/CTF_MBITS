@@ -38,6 +38,45 @@
       "joinedAt": "2026-02-26T08:02:35.486Z",
       "lastUpdate": "2026-02-26T08:02:35.486Z",
       "completedAt": null
+    },
+    "lo": {
+      "name": "lo",
+      "score": 0,
+      "counts": {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+      },
+      "flags": [],
+      "joinedAt": "2026-02-26T11:00:16.939Z",
+      "lastUpdate": "2026-02-26T11:00:16.939Z",
+      "completedAt": null
+    },
+    "PO": {
+      "name": "PO",
+      "score": 0,
+      "counts": {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+      },
+      "flags": [],
+      "joinedAt": "2026-02-26T11:00:37.707Z",
+      "lastUpdate": "2026-02-26T11:00:37.707Z",
+      "completedAt": null
+    },
+    "LO": {
+      "name": "LO",
+      "score": 0,
+      "counts": {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+      },
+      "flags": [],
+      "joinedAt": "2026-02-26T11:01:05.264Z",
+      "lastUpdate": "2026-02-26T11:01:05.264Z",
+      "completedAt": null
     }
   },
   "activity": []

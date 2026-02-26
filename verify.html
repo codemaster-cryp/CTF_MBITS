@@ -348,7 +348,7 @@
 <div class="button-group">
     <button onclick="window.location='control-room.html'">TO CONTROL ROOM</button>
     <button onclick="resetProgress()" style="background: rgba(255,0,0,0.1); border-color: #ff4444; color: #ff4444;">RESET PROGRESS</button>
-    <button onclick="window.location='overwatch.html'">OVERWATCH</button>
+    <button onclick="openOverwatchAdmin()">OVERWATCH</button>
 </div>
 <!-- Winner celebration modal -->
 <div id="winner-modal" class="winner-overlay" aria-hidden="true">
@@ -588,6 +588,17 @@ function getApiBaseUrl() {
 
 function getPlayerName() {
     return (localStorage.getItem('ctf_player_name') || '').trim();
+}
+
+function openOverwatchAdmin() {
+    const ADMIN_CODE = 'OVER9022';
+    const entered = prompt('Admin code required to open Overwatch:');
+    if (entered === null) return;
+    if (entered.trim() !== ADMIN_CODE) {
+        alert('Access denied: invalid admin code.');
+        return;
+    }
+    window.location = 'overwatch.html';
 }
 
 async function submitFlag(form) {
