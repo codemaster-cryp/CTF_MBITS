@@ -1,0 +1,94 @@
+/* Page background */
+body {
+    margin: 0;
+    height: 100vh;
+
+    /* parchment-style gradient */
+    background: linear-gradient(
+        135deg,
+        #e8dcc4,
+        #d2c2a3
+    );
+
+    font-family: 'Cinzel', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Stone tablet container */
+.tablet {
+    background: ##1f2a44;
+    border: 6px solid #8b6f47;
+    border-radius: 12px;
+
+    width: 700px;
+    padding: 50px;
+
+    text-align: center;
+
+    box-shadow:
+        0 0 30px rgba(0,0,0,0.4),
+        inset 0 0 25px rgba(0,0,0,0.15);
+}
+
+/* Title */
+h1 {
+    font-size: 42px;
+    letter-spacing: 3px;
+    color: #5a3e1b;
+    margin-bottom: 10px;
+}
+
+/* Subtitle text */
+.subtitle {
+    font-size: 16px;
+    color: #6b5a3a;
+    margin-bottom: 40px;
+}
+
+/* Cipher inscription */
+.cipher {
+    font-size: 26px;
+    letter-spacing: 2px;
+    padding: 20px;
+
+    background: #efe5cf;
+    border: 2px dashed #8b6f47;
+
+    color: #3a2a12;
+    margin-bottom: 30px;
+
+    word-wrap: break-word;
+}
+
+/* Old hint style (optional fallback) */
+.hint {
+    font-style: italic;
+    color: #7a6845;
+}
+
+/* Roman highlighted hint */
+.roman-hint {
+    margin-top: 25px;
+    padding: 15px 25px;
+
+    font-size: 18px;
+    letter-spacing: 1.5px;
+
+    color: #7F00FF;
+    background: linear-gradient(
+        to right,
+        rgba(139,111,71,0.15),
+        rgba(139,111,71,0.35),
+        rgba(139,111,71,0.15)
+    );
+
+    border-top: 2px solid #8b6f47;
+    border-bottom: 2px solid #8b6f47;
+
+    font-weight: bold;
+    text-transform: uppercase;
+
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+}

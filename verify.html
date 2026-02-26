@@ -368,7 +368,7 @@
         <h1 class="winner-title">🎉 CHAMPION HACKER 🎉</h1>
         <p class="winner-message">You've conquered all challenges!<br/>All flags verified successfully.</p>
         <div class="winner-stats">
-            <div class="stat-box"><span class="stat-num">8</span><span class="stat-label">Easy</span></div>
+            <div class="stat-box"><span class="stat-num">9</span><span class="stat-label">Easy</span></div>
             <div class="stat-box"><span class="stat-num">7</span><span class="stat-label">Medium</span></div>
             <div class="stat-box"><span class="stat-num">2</span><span class="stat-label">Hard</span></div>
         </div>
@@ -467,7 +467,7 @@ function checkWinCondition(progress) {
     const easy = progress.easy.length;
     const medium = progress.medium.length;
     const hard = progress.hard.length;
-    if (easy >= 8 && medium >= 7 && hard >= 2) {
+    if (easy >= 9 && medium >= 7 && hard >= 2) {
         setTimeout(() => {
             showWinnerModal();
         }, 1500);
@@ -491,7 +491,7 @@ function resetProgress() {
     if (confirm('Reset all flag progress? This will clear all verified flags.')) {
         localStorage.removeItem('ctf_verified_flags');
         updateProgressDisplay();
-        alert('Progress reset to 0/17. Ready for next test run.');
+        alert('Progress reset to 0/18. Ready for next test run.');
     }
 }
 
@@ -563,9 +563,9 @@ function updateProgressDisplay() {
     const medium = progress.medium ? progress.medium.length : 0;
     const hard = progress.hard ? progress.hard.length : 0;
     const total = easy + medium + hard;
-    const max = 8 + 7 + 2;
+    const max = 9 + 7 + 2;
     const progressDiv = document.getElementById('progress-display') || createProgressDisplay();
-    progressDiv.innerHTML = `<strong>Flags Verified:</strong> Easy: ${easy}/8 | Medium: ${medium}/7 | Hard: ${hard}/2 (Total: ${total}/${max})`;
+    progressDiv.innerHTML = `<strong>Flags Verified:</strong> Easy: ${easy}/9 | Medium: ${medium}/7 | Hard: ${hard}/2 (Total: ${total}/${max})`;
 }
 
 function createProgressDisplay() {

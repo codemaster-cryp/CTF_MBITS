@@ -27,6 +27,8 @@ const OVERWATCH_FILE = path.join(__dirname, 'overwatch.json');
 const DO_NOTHING_TEMPLATE = path.join(__dirname, 'do_nothing_ctf', 'templates', 'index.html');
 const SUDOKU_TEMPLATE = path.join(__dirname, 'sudoku-ctf', 'challenge', 'templates', 'index.html');
 const EMOJI_CTF_FILE = path.join(__dirname, 'emoji_ctf', 'emoji test');
+const CEASER_CIPHER_HTML = path.join(__dirname, 'CEASER CIPHER', 'easy-caesar-ctf', 'challenge', 'index.html');
+const CEASER_CIPHER_CSS = path.join(__dirname, 'CEASER CIPHER', 'easy-caesar-ctf', 'challenge', 'style.css');
 const MBITS_IMAGE_FILE = path.join(__dirname, 'mbits.png');
 const SIMPLE_IMAGE_FILE = path.join(__dirname, 'simple.png');
 const MIRROR_TEMPLATES = path.join(__dirname, 'mirror-of-erised-ctf', 'templates');
@@ -251,6 +253,11 @@ function renderEmojiChallenge() {
     return fs.readFileSync(EMOJI_CTF_FILE, 'utf8');
 }
 
+function renderCeaserCipherChallenge() {
+    const html = fs.readFileSync(CEASER_CIPHER_HTML, 'utf8');
+    return html.replace('href="style.css"', 'href="/caesar-ctf/style.css"');
+}
+
 function renderMirror(token) {
     const html = loadTemplate('mirror.html');
     return html.replace(/\{\{\s*token\s*\}\}/g, token);
@@ -410,6 +417,21 @@ app.get('/emoji-ctf', (req, res) => {
     }
 });
 
+app.get('/caesar-ctf', (req, res) => {
+    try {
+        res.type('html').send(renderCeaserCipherChallenge());
+    } catch (err) {
+        res.status(500).json({ error: 'caesar ctf not available' });
+    }
+});
+
+app.get('/caesar-ctf/style.css', (req, res) => {
+    if (!fs.existsSync(CEASER_CIPHER_CSS)) {
+        return res.status(404).type('text').send('Not found');
+    }
+    return res.type('css').send(fs.readFileSync(CEASER_CIPHER_CSS, 'utf8'));
+});
+
 app.get('/download/mbits', (req, res) => {
     if (!fs.existsSync(MBITS_IMAGE_FILE)) {
         return res.status(404).json({ error: 'mbits.png not found' });
@@ -547,7 +569,7 @@ const server = app.listen(PORT, () => {
     console.log('🔐 CTF Verification Server Started');
     console.log(`URL: http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /download/mbits, /download/simple, /hogwarts/*, /evilcorp`);
+    console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /download/mbits, /download/simple, /hogwarts/*, /evilcorp`);
     console.log(`${'='.repeat(50)}\n`);
 });
 
