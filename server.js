@@ -544,12 +544,12 @@ function createBinhexaSession(clientId) {
         const num1 = Math.floor(Math.random() * 256);
         const num2 = Math.floor(Math.random() * 256);
         const operations = [
-                { op: '<<', expected: bin8((num1 << 1) & 0xff) },
-                { op: '|', expected: bin8(num1 | num2) },
-                { op: '+', expected: (num1 + num2).toString(2) },
-                { op: '*', expected: (num1 * num2).toString(2) },
-                { op: '>>', expected: bin8(num2 >> 1) },
-                { op: '&', expected: bin8(num1 & num2) }
+        { op: '<<', rule: 'Apply on num1: num1 << 1 (8-bit wrap)', expected: bin8((num1 << 1) & 0xff) },
+        { op: '|', rule: 'Apply on num1 and num2: num1 | num2', expected: bin8(num1 | num2) },
+        { op: '+', rule: 'Add both numbers: num1 + num2', expected: (num1 + num2).toString(2) },
+        { op: '*', rule: 'Multiply both numbers: num1 * num2', expected: (num1 * num2).toString(2) },
+        { op: '>>', rule: 'Apply on num2: num2 >> 1', expected: bin8(num2 >> 1) },
+        { op: '&', rule: 'Apply on num1 and num2: num1 & num2', expected: bin8(num1 & num2) }
         ];
 
         binhexaSessions[clientId] = {
@@ -575,6 +575,7 @@ function renderBinhexaPage() {
         .card { width:min(760px,92vw); background:rgba(8,16,24,0.92); border:1px solid #53e8ff66; border-radius:14px; padding:24px; box-shadow:0 14px 34px rgba(0,0,0,.45), inset 0 0 20px rgba(83,232,255,.12); }
         h1 { margin:0 0 8px; color:#7ef0ff; letter-spacing:.8px; }
         .muted { color:#9bc5cf; margin-bottom:14px; }
+        .guide { margin:10px 0 14px; padding:10px 12px; border:1px dashed #4be4ff66; border-radius:10px; background:#08121d; color:#b9dbe2; font-size:13px; line-height:1.5; }
         .line { margin:7px 0; }
         .q { margin-top:12px; font-size:18px; color:#ffd970; }
         input { width:100%; margin-top:10px; box-sizing:border-box; padding:10px 12px; border-radius:8px; border:1px solid #4be4ff77; background:#081320; color:#d8fbff; font-family:inherit; }
@@ -589,6 +590,13 @@ function renderBinhexaPage() {
     <div class="card">
         <h1>BinHexa Redux</h1>
         <div class="muted">Solve 6 binary operations, then submit final result in hexadecimal.</div>
+        <div class="guide">
+            <strong>How to solve each step:</strong><br/>
+            Use the two shown binary numbers as <code>num1</code> and <code>num2</code>.<br/>
+            <code>&lt;&lt;</code> means <code>num1 &lt;&lt; 1</code>, <code>&gt;&gt;</code> means <code>num2 &gt;&gt; 1</code>, and others use both numbers.<br/>
+            Example: <code>1010 | 0110 = 1110</code>.<br/>
+            Enter answers in binary for Q1-Q6, then enter hexadecimal for the final question.
+        </div>
         <div class="line" id="n1">Binary Number 1: --</div>
         <div class="line" id="n2">Binary Number 2: --</div>
         <div class="q" id="question">Loading challenge...</div>
@@ -866,11 +874,12 @@ app.get('/binhexa', (req, res) => {
 app.post('/binhexa/start', (req, res) => {
     const clientId = getClientId(req);
     const session = createBinhexaSession(clientId);
+    const first = session.operations[0];
     return res.json({
         ok: true,
         bin1: bin8(session.num1),
         bin2: bin8(session.num2),
-        prompt: `Question 1/6 — Operation '${session.operations[0].op}'`
+        prompt: `Question 1/6 — Operation '${first.op}' • ${first.rule}`
     });
 });
 
@@ -897,7 +906,8 @@ app.post('/binhexa/answer', (req, res) => {
         if (session.step === 6) {
             return res.json({ ok: true, message: 'Correct! Final step: enter the result in hexadecimal.', prompt: 'Final Question — Enter hex for last result' });
         }
-        return res.json({ ok: true, message: 'Correct!', prompt: `Question ${session.step + 1}/6 — Operation '${session.operations[session.step].op}'` });
+        const next = session.operations[session.step];
+        return res.json({ ok: true, message: 'Correct!', prompt: `Question ${session.step + 1}/6 — Operation '${next.op}' • ${next.rule}` });
     }
 
     const expectedHex = parseInt(session.operations[5].expected, 2).toString(16);

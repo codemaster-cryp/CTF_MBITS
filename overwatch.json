@@ -77,6 +77,19 @@
       "joinedAt": "2026-02-26T11:01:05.264Z",
       "lastUpdate": "2026-02-26T11:01:05.264Z",
       "completedAt": null
+    },
+    "po": {
+      "name": "po",
+      "score": 0,
+      "counts": {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+      },
+      "flags": [],
+      "joinedAt": "2026-02-27T05:21:17.427Z",
+      "lastUpdate": "2026-02-27T05:21:17.427Z",
+      "completedAt": null
     }
   },
   "activity": []
