@@ -410,7 +410,7 @@ function renderOverwatch(data) {
 
 async function refreshOverwatch() {
     try {
-        const res = await fetch(`${getApiBaseUrl()}/overwatch`);
+        const res = await fetch(`${getApiBaseUrl()}/overwatch?t=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) {
             if (res.status === 404) {
                 const updatedChip = document.getElementById('overwatch-updated');
@@ -459,6 +459,9 @@ async function adminResetOverwatch() {
             return;
         }
         alert('Overwatch logs reset successfully.');
+        if (result.payload) {
+            renderOverwatch(result.payload);
+        }
         refreshOverwatch();
     } catch (err) {
         console.error('[CTF] Overwatch reset error:', err);

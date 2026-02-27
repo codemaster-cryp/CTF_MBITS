@@ -731,6 +731,9 @@ function findFlagDifficulty(flagStr) {
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 app.get('/overwatch', (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.json(getOverwatchPayload());
 });
 
@@ -753,7 +756,8 @@ app.post('/overwatch/reset', (req, res) => {
 
     overwatchState = createDefaultOverwatchState();
     saveOverwatchState();
-    return res.json({ ok: true, message: 'Overwatch logs reset' });
+    overwatchState = loadOverwatchState();
+    return res.json({ ok: true, message: 'Overwatch logs reset', payload: getOverwatchPayload() });
 });
 
 // Do Nothing challenge (ported from do_nothing_ctf/app.py)
