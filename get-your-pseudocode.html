@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get Your Pseudocode</title>
+    <link rel="stylesheet" href="style.css?v=2" />
+    <style>
+        body { overflow-y: auto; }
+        .container {
+            margin: 8% auto 40px;
+            width: min(860px, 92vw);
+            text-align: center;
+        }
+        .assigner-card {
+            border: 1.5px solid rgba(0, 255, 204, 0.35);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(0,16,14,0.7), rgba(4,32,28,0.55));
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4), inset 0 0 18px rgba(0,255,204,0.12);
+            padding: 20px;
+            text-align: left;
+        }
+        .card-title {
+            color: #9affea;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0 0 8px;
+            text-shadow: 0 0 14px rgba(0,255,204,0.35);
+        }
+        .card-sub {
+            margin: 0 0 14px;
+            color: #c7fff3;
+            font-size: 13px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+        .field-label {
+            display: block;
+            font-size: 12px;
+            color: #99ffde;
+            margin-bottom: 6px;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+        }
+        .player-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,255,204,0.2);
+            background: rgba(6,8,10,0.94);
+            color: #ecfff8;
+            outline: none;
+            box-sizing: border-box;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+        .player-input:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 16px rgba(0,255,204,0.1);
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .assigned-code {
+            margin: 14px 0;
+            padding: 16px;
+            border: 1px solid rgba(0,255,204,0.28);
+            border-radius: 12px;
+            background: rgba(0,255,204,0.06);
+            color: #eafff9;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-align: center;
+            min-height: 34px;
+        }
+        .status {
+            color: #b8fff0;
+            font-size: 13px;
+            min-height: 18px;
+            margin-bottom: 8px;
+        }
+        .status.error { color: #ffd1d1; }
+        .assigned-title {
+            margin: 14px 0 8px;
+            color: #9af6df;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .assigned-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 280px;
+            overflow: auto;
+            border: 1px solid rgba(0,255,204,0.16);
+            border-radius: 12px;
+            background: rgba(2,14,12,0.5);
+        }
+        .assigned-list li {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0,255,204,0.1);
+            color: #defff7;
+            font-size: 13px;
+        }
+        .assigned-list li:last-child { border-bottom: none; }
+        .muted { color: #9fd8cd; }
+        @media (max-width: 700px) {
+            .container { margin-top: 18%; }
+            .row { grid-template-columns: 1fr; }
+            .assigned-code { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-image"></div>
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <h1 class="glitch" data-text="GET YOUR PSEUDOCODE">GET YOUR PSEUDOCODE</h1>
+    <p class="subtitle">Players can request and get assigned one random pseudocode.</p>
+
+    <section class="assigner-card">
+        <h2 class="card-title">Pseudocode Assigner</h2>
+        <p class="card-sub">One click assignment from pseudocodes.json. Assigned codes are not repeated.</p>
+
+        <label class="field-label" for="player">Player Name</label>
+        <div class="row">
+            <input id="player" class="player-input" placeholder="Enter player name" autocomplete="off" />
+            <button id="assignBtn">GET PSEUDOCODE</button>
+        </div>
+
+        <div id="currentCode" class="assigned-code">--</div>
+        <div id="status" class="status"></div>
+
+        <div class="btn-row">
+            <button id="resetBtn">RESET ASSIGNMENTS</button>
+            <button onclick="window.location='index.html'">BACK TO PORTAL</button>
+        </div>
+
+        <div class="assigned-title">Assigned List</div>
+        <ul id="assignedList" class="assigned-list"></ul>
+    </section>
+</div>
+
+<script src="script.js"></script>
+<script>
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    if (typeof initMatrix === 'function') initMatrix();
+    setTimeout(() => {
+        const hdr = document.querySelector('.glitch');
+        if (hdr) hdr.classList.add('glitch-animate');
+    }, 520);
+    setTimeout(() => {
+        if (typeof animateSubtitle === 'function') animateSubtitle();
+    }, 720);
+    setTimeout(() => {
+        if (typeof decryptHeader === 'function') decryptHeader();
+    }, 600);
+});
+
+const STORAGE_KEY = 'ctf_pseudocode_assignments_v1';
+let pseudocodes = [];
+let assignments = loadAssignments();
+
+function loadAssignments() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+}
+
+function saveAssignments() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function setStatus(text, isError) {
+    const status = document.getElementById('status');
+    status.textContent = text;
+    status.classList.toggle('error', !!isError);
+}
+
+function renderAssignments() {
+    const list = document.getElementById('assignedList');
+    if (!assignments.length) {
+        list.innerHTML = '<li class="muted">No assignments yet.</li>';
+        return;
+    }
+    list.innerHTML = assignments.map((item) =>
+        `<li><strong>${escapeHtml(item.player)}</strong> → ${escapeHtml(item.code)}</li>`
+    ).join('');
+}
+
+function availableCodes() {
+    const used = new Set(assignments.map((a) => a.code));
+    return pseudocodes.filter((code) => !used.has(code));
+}
+
+async function loadPseudocodes() {
+    const res = await fetch('pseudocodes.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Unable to load pseudocodes.json');
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('pseudocodes.json must contain an array');
+    pseudocodes = data;
+    const remaining = availableCodes().length;
+    setStatus(`Loaded ${pseudocodes.length} pseudocodes • Remaining ${remaining}`, false);
+}
+
+function assignRandomCode() {
+    const playerInput = document.getElementById('player');
+    const player = playerInput.value.trim();
+    const currentCode = document.getElementById('currentCode');
+
+    if (!player) {
+        setStatus('Enter player name first.', true);
+        return;
+    }
+
+    const pool = availableCodes();
+    if (!pool.length) {
+        currentCode.textContent = 'ALL ASSIGNED';
+        setStatus('No pseudocodes left to assign.', true);
+        return;
+    }
+
+    const code = pool[Math.floor(Math.random() * pool.length)];
+    assignments.push({ player, code, assignedAt: new Date().toISOString() });
+    saveAssignments();
+    renderAssignments();
+
+    currentCode.textContent = code;
+    setStatus(`Assigned ${code} to ${player} • Remaining ${pool.length - 1}`, false);
+    playerInput.focus();
+    playerInput.select();
+}
+
+function resetAssignments() {
+    const adminCode = prompt('Admin code required to reset assignments:');
+    if (adminCode === null) return;
+    if (adminCode.trim() !== 'RESETX104') {
+        setStatus('Access denied: invalid admin code.', true);
+        return;
+    }
+    if (!confirm('Clear all assignments?')) return;
+    assignments = [];
+    saveAssignments();
+    renderAssignments();
+    document.getElementById('currentCode').textContent = '--';
+    const remaining = pseudocodes.length;
+    setStatus(`Assignments reset • Remaining ${remaining}`, false);
+}
+
+document.getElementById('assignBtn').addEventListener('click', assignRandomCode);
+document.getElementById('resetBtn').addEventListener('click', resetAssignments);
+document.getElementById('player').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') assignRandomCode();
+});
+
+(async () => {
+    try {
+        await loadPseudocodes();
+        renderAssignments();
+    } catch (err) {
+        setStatus(err.message || 'Failed to initialize assigner.', true);
+    }
+})();
+</script>
+</body>
+</html>
