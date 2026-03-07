@@ -23,7 +23,12 @@ app.use(express.static(__dirname));
 
 const DATA_FILE = path.join(__dirname, 'pseudocodes.json');
 const FLAGS_FILE = path.join(__dirname, 'flags.json');
-const OVERWATCH_FILE = path.join(__dirname, 'overwatch.json');
+const DEFAULT_OVERWATCH_FILE = path.join(__dirname, 'overwatch.json');
+const OVERWATCH_FILE = process.env.OVERWATCH_FILE
+    ? path.resolve(process.env.OVERWATCH_FILE)
+    : (process.env.CTF_DATA_DIR
+        ? path.join(path.resolve(process.env.CTF_DATA_DIR), 'overwatch.json')
+        : DEFAULT_OVERWATCH_FILE);
 const DO_NOTHING_TEMPLATE = path.join(__dirname, 'do_nothing_ctf', 'templates', 'index.html');
 const SUDOKU_TEMPLATE = path.join(__dirname, 'sudoku-ctf', 'challenge', 'templates', 'index.html');
 const EMOJI_CTF_FILE = path.join(__dirname, 'emoji_ctf', 'emoji test');
@@ -95,8 +100,16 @@ function createDefaultOverwatchState() {
     return { players: {}, activity: [] };
 }
 
+function ensureOverwatchStorageDir() {
+    fs.mkdirSync(path.dirname(OVERWATCH_FILE), { recursive: true });
+}
+
 function loadOverwatchState() {
+    ensureOverwatchStorageDir();
     try {
+        if (!fs.existsSync(OVERWATCH_FILE)) {
+            return createDefaultOverwatchState();
+        }
         const parsed = JSON.parse(fs.readFileSync(OVERWATCH_FILE, 'utf8'));
         if (!parsed || typeof parsed !== 'object') return createDefaultOverwatchState();
         return {
@@ -109,6 +122,7 @@ function loadOverwatchState() {
 }
 
 function saveOverwatchState() {
+    ensureOverwatchStorageDir();
     fs.writeFileSync(OVERWATCH_FILE, JSON.stringify(overwatchState, null, 2), 'utf8');
 }
 
@@ -1163,6 +1177,7 @@ const server = app.listen(PORT, () => {
     console.log('🔐 CTF Verification Server Started');
     console.log(`URL: http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Overwatch Store: ${OVERWATCH_FILE}`);
     console.log(`Endpoints: /verify, /verify-flag, /overwatch, /overwatch/register, /overwatch/reset, /do-nothing/*, /sudoku/*, /emoji-ctf, /caesar-ctf, /binhexa/*, /hashcrack/*, /mindreader/*, /find-location/*, /morse-ctf/*, /robots-ctf/*, /download/mbits, /download/simple, /download/simple-zip, /download/final, /hogwarts/*, /evilcorp`);
     console.log(`${'='.repeat(50)}\n`);
 });
